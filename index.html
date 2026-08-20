@@ -78,6 +78,17 @@ section{margin-top:26px}
 .tally span{width:9px;height:9px;border-radius:50%;background:var(--line)}
 .tally span.on{background:var(--mikasa-gelb)}
 .tally span.hot{background:var(--pfiff-rot)}
+
+/* Admin-Aktionen in der Spielerzeile */
+.row.hasactions{flex-wrap:wrap}
+.row-actions{display:flex;gap:6px;width:100%;margin-top:4px}
+.mini{
+  flex:1;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);
+  border-radius:10px;padding:9px 6px;font-family:inherit;font-size:.78rem;font-weight:700;
+  cursor:pointer;min-height:40px;
+}
+.mini:active{transform:scale(.97)}
+.mini.gruen{background:rgba(62,207,142,.15);border-color:var(--netz-gruen);color:var(--netz-gruen)}
 .status{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 8px;border-radius:6px;flex-shrink:0}
 .status.paypal{background:rgba(61,107,255,.16);color:#7C9BFF}
 .status.pocket{background:rgba(62,207,142,.14);color:var(--netz-gruen)}
@@ -158,8 +169,10 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
 .toast{
   position:fixed;left:50%;bottom:110px;transform:translateX(-50%);
   background:var(--netz-gruen);color:#04220F;font-weight:700;font-size:.9rem;
-  padding:12px 20px;border-radius:999px;z-index:99;display:none;white-space:nowrap;
+  padding:12px 20px;border-radius:999px;z-index:99;display:none;
+  max-width:90vw;text-align:center;line-height:1.35;
 }
+.toast.err{background:var(--pfiff-rot);color:#2A0000}
 .demo-banner{background:rgba(255,196,0,.1);border:1px solid rgba(255,196,0,.3);color:var(--mikasa-gelb);font-size:.78rem;border-radius:12px;padding:10px 14px;margin-bottom:16px;display:none}
 </style>
 </head>
@@ -240,7 +253,7 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
         <button class="btn btn-blau" onclick="startSturz()">Kassensturz machen</button>
       </div>
       <div class="sturz-step" id="sturz2">
-        <div style="text-align:center;font-size:.85rem;color:var(--ink-dim)">Aktuell auf PayPal (<span id="sturzCount"></span> Zahlungen)</div>
+        <div style="text-align:center;font-size:.85rem;color:var(--ink-dim)">Noch nicht aufs Konto übertragen (<span id="sturzCount"></span> Zahlungen)</div>
         <div class="sturz-amount" id="sturzAmount"></div>
         <div class="copyline">
           <code id="sturzText"></code>
@@ -379,14 +392,20 @@ function render(){
     const rechts = p.offen>0
       ? `<div class="amt">${eur(p.offen)}</div>`
       : `<div class="amt">${p.anzahl===1?"Verwarnung":"bezahlt ✓"}</div>`;
+    const aktionen = (state.admin && p.offen>0) ? `
+      <div class="row-actions">
+        <button class="mini gruen" onclick="bezahlt('${esc(p.name)}', false)">✓ Bezahlt (PayPal)</button>
+        <button class="mini" onclick="bezahlt('${esc(p.name)}', true)">💶 Bar kassiert</button>
+      </div>` : "";
     return `
-    <div class="row ${cls}">
+    <div class="row ${cls}${aktionen?" hasactions":""}">
       <div class="who">
         <div class="name">${esc(p.name)}</div>
         <div class="why">${p.anzahl}× abgesagt${p.letzte?" · zuletzt "+kurzDatum(p.letzte):""} · nächste ${eur(strafe(p.anzahl+1))}</div>
         <div class="tally">${punkte}</div>
       </div>
       ${rechts}
+      ${aktionen}
     </div>`;
   }).join("") : `<div class="empty">Keine Absagen – alle zuverlässig! 💪</div>`;
 
@@ -462,6 +481,32 @@ async function addFine(){
   }catch(e){ toast("⚠ Verbindung fehlgeschlagen"); }
 }
 
+/* Offene Strafen eines Spielers abhaken.
+   bar=false: Geld kam per PayPal/Überweisung, Zahlungszeile existiert schon.
+   bar=true : Bargeld – es wird zusätzlich eine Zahlungszeile angelegt. */
+async function bezahlt(name, bar){
+  const p = state.spieler.find(x=>x.name === name);
+  const betrag = p ? p.offen : 0;
+  if(!confirm(`${name}: ${eur(betrag)} als bezahlt markieren${bar?" und als Bargeld verbuchen":""}?`)) return;
+
+  if(!CONFIG.APPS_SCRIPT_URL){
+    if(p){
+      if(bar) state.payments.unshift({name, betrag:p.offen, status:"Bar erhalten", datum:new Date().toLocaleDateString("de-DE")});
+      p.offen = 0;
+    }
+    render(); toast(`✔ ${name}: ${eur(betrag)} verbucht (Demo)`); return;
+  }
+  try{
+    const res = await fetch(CONFIG.APPS_SCRIPT_URL,{
+      method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({action:"bezahlt", pass:state.adminPass, name, bar})
+    });
+    const d = await res.json();
+    if(d.ok){ await loadData(); toast(`✔ ${name}: ${eur(d.summe)} als bezahlt markiert`); }
+    else toast("⚠ " + (d.error||"Fehler"));
+  }catch(e){ toast("⚠ Verbindung fehlgeschlagen"); }
+}
+
 /* Kassensturz */
 function startSturz(){
   const auf = state.payments.filter(p=>!istPocket(p));
@@ -469,7 +514,7 @@ function startSturz(){
   if(!auf.length){ toast("Nichts offen – alles schon verbucht ✔"); return; }
   $("sturzCount").textContent = auf.length;
   $("sturzAmount").textContent = eur(sum);
-  $("sturzText").textContent = `Überweise jetzt manuell ${eur(sum)} von PayPal auf dein C24-Pocket.`;
+  $("sturzText").textContent = `Jetzt ${eur(sum)} aufs C24-Pocket übertragen (PayPal-Guthaben bzw. Bargeld einzahlen).`;
   step("sturz2");
 }
 function copySturz(){ copy($("sturzText").textContent); }
@@ -532,8 +577,11 @@ function copy(t){
 }
 let toastTimer;
 function toast(msg){
-  const t=$("toast"); t.textContent=msg; t.style.display="block";
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.display="none",2600);
+  const t=$("toast");
+  t.textContent=msg;
+  t.classList.toggle("err", /⚠|fehlgeschlagen|Fehler|Passwort/i.test(msg));
+  t.style.display="block";
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.display="none",3200);
 }
 
 loadData();
