@@ -38,6 +38,13 @@ function fmtDate_(v) {
   if (v instanceof Date) {
     return Utilities.formatDate(v, Session.getScriptTimeZone(), "dd.MM.yyyy");
   }
+  // Zelle als Text formatiert o.ä. – Parsen versuchen, sonst unverändert lassen
+  if (v) {
+    const d = new Date(v);
+    if (!isNaN(d.getTime())) {
+      return Utilities.formatDate(d, Session.getScriptTimeZone(), "dd.MM.yyyy");
+    }
+  }
   return String(v || "");
 }
 

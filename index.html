@@ -50,15 +50,6 @@ main{max-width:520px;margin:0 auto;padding:18px 16px 0}
   color:var(--mikasa-gelb);line-height:1.05;font-variant-numeric:tabular-nums;
   text-shadow:0 0 24px rgba(255,196,0,.25);
 }
-.scoreboard .split{display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
-.chip{
-  font-size:.78rem;font-weight:600;padding:6px 12px;border-radius:999px;
-  border:1px solid var(--line);background:var(--panel-2);color:var(--ink-dim);
-  font-variant-numeric:tabular-nums;
-}
-.chip b{color:var(--ink)}
-.chip.paypal b{color:var(--mikasa-blau)}
-.chip.pocket b{color:var(--netz-gruen)}
 
 section{margin-top:26px}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;border-bottom:2px solid var(--line);padding-bottom:8px}
@@ -136,9 +127,6 @@ section{margin-top:26px}
 .qr-wrap{display:none;margin-top:16px}
 .qr-wrap.open{display:block}
 .qr-box{background:#fff;border-radius:16px;padding:16px;width:fit-content;margin:0 auto}
-.zweck{margin-top:16px;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:14px}
-.zweck .warn{font-weight:800;font-size:.92rem;color:var(--mikasa-gelb);margin-bottom:10px}
-.zweck code{display:block;background:var(--court);border-radius:10px;padding:12px;font-size:.92rem;word-break:break-all;color:var(--ink);margin-bottom:10px}
 
 input,select{
   width:100%;background:var(--court);border:1px solid var(--line);border-radius:12px;
@@ -195,10 +183,6 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
   <div class="scoreboard">
     <div class="label">Kassenstand</div>
     <div class="amount" id="balance">–</div>
-    <div class="split">
-      <span class="chip paypal">Auf PayPal: <b id="paypalSum">–</b></span>
-      <span class="chip pocket">Im C24-Pocket: <b id="pocketSum">–</b></span>
-    </div>
   </div>
 
   <!-- Spielerliste: Absagen + offener Betrag in einem -->
@@ -290,15 +274,7 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
 
     <div class="pay-options">
       <button class="btn btn-blau" onclick="showQR('paypal')">💙 Per PayPal zahlen</button>
-      <button class="btn btn-ghost" onclick="showQR('c24')">🏦 Direkt aufs C24-Konto</button>
-    </div>
-
-    <div class="zweck" id="zweckBox" style="display:none">
-      <div class="warn">⚠ UNBEDINGT als Verwendungszweck angeben:</div>
-      <label>Dein Name</label>
-      <input id="zName" placeholder="Name" oninput="buildZweck()">
-      <code id="zweckText">[Name] – Absage – [Datum]</code>
-      <button class="btn btn-ghost" style="min-height:48px" onclick="copyZweck()">Verwendungszweck kopieren</button>
+      <button class="btn btn-ghost" onclick="showQR('c24')">🏦 Banküberweisung per QR-Code</button>
     </div>
 
     <div class="qr-wrap" id="qrPaypal">
@@ -313,7 +289,7 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
       <input id="c24Betrag" type="number" inputmode="decimal" step="0.50" placeholder="z.B. 1.50" oninput="buildGiro()">
       <div class="qr-box" id="qrC24Box"></div>
       <p style="text-align:center;font-size:.85rem;color:var(--ink-dim);margin-top:10px">
-        GiroCode mit der Banking-App scannen – IBAN, Betrag &amp; Verwendungszweck sind schon drin.
+        QR-Code mit der Banking-App scannen – IBAN und Betrag sind schon drin.
       </p>
     </div>
   </div>
@@ -373,12 +349,21 @@ async function loadData(){
 const IM_POCKET = "Im C24-Pocket verschoben";
 const istPocket = p => p.status === IM_POCKET;
 
+/* Datum robust auf "20.08." kürzen – egal ob das Sheet ein Datum,
+   einen ISO-String oder einen ausgeschriebenen JS-Date-String liefert. */
+function kurzDatum(v){
+  if(!v) return "";
+  const s = String(v);
+  const de = s.match(/^(\d{1,2})\.(\d{1,2})\./);        // schon "20.08.2026"
+  if(de) return `${de[1].padStart(2,"0")}.${de[2].padStart(2,"0")}.`;
+  const d = new Date(s);
+  if(!isNaN(d)) return `${String(d.getDate()).padStart(2,"0")}.${String(d.getMonth()+1).padStart(2,"0")}.`;
+  return s.slice(0,10);
+}
+
 function render(){
-  const paypal = state.payments.filter(p=>!istPocket(p)).reduce((s,p)=>s+p.betrag,0);
-  const pocket = state.payments.filter(istPocket).reduce((s,p)=>s+p.betrag,0);
-  $("balance").textContent = eur(paypal+pocket);
-  $("paypalSum").textContent = eur(paypal);
-  $("pocketSum").textContent = eur(pocket);
+  const gesamt = state.payments.reduce((s,p)=>s+p.betrag,0);
+  $("balance").textContent = eur(gesamt);
 
   // Spieler: Absagen + offener Betrag in einer Zeile
   const sp = [...state.spieler].sort((a,b)=> b.offen-a.offen || b.anzahl-a.anzahl);
@@ -395,7 +380,7 @@ function render(){
     <div class="row ${cls}">
       <div class="who">
         <div class="name">${esc(p.name)}</div>
-        <div class="why">${p.anzahl}× abgesagt${p.letzte?" · zuletzt "+esc(p.letzte):""} · nächste ${eur(strafe(p.anzahl+1))}</div>
+        <div class="why">${p.anzahl}× abgesagt${p.letzte?" · zuletzt "+kurzDatum(p.letzte):""} · nächste ${eur(strafe(p.anzahl+1))}</div>
         <div class="tally">${punkte}</div>
       </div>
       ${rechts}
@@ -406,7 +391,7 @@ function render(){
   $("payCount").textContent = state.payments.length;
   $("payList").innerHTML = recent.length ? recent.map(p=>`
     <div class="row">
-      <div class="who"><div class="name">${esc(p.name)}</div><div class="why">${esc(p.datum||"")}</div></div>
+      <div class="who"><div class="name">${esc(p.name)}</div><div class="why">${kurzDatum(p.datum)}</div></div>
       <span class="status ${istPocket(p)?"pocket":"paypal"}">${istPocket(p)?"C24-Pocket":"Auf PayPal"}</span>
       <div class="amt">${eur(p.betrag)}</div>
     </div>`).join("") : `<div class="empty">Noch keine Zahlungen eingegangen.</div>`;
@@ -516,10 +501,8 @@ let qrPP=null;
 function openPay(){ $("payModal").classList.add("open"); document.body.style.overflow="hidden"; }
 function closePay(){ $("payModal").classList.remove("open"); document.body.style.overflow=""; }
 function showQR(which){
-  $("zweckBox").style.display="block";
   $("qrPaypal").classList.toggle("open", which==="paypal");
   $("qrC24").classList.toggle("open", which==="c24");
-  buildZweck();
   if(which==="paypal" && !qrPP){
     qrPP = new QRCode($("qrPaypalBox"), {text: CONFIG.PAYPAL_ME, width:200, height:200, correctLevel: QRCode.CorrectLevel.M});
     $("ppLink").textContent = CONFIG.PAYPAL_ME.replace("https://","");
@@ -527,19 +510,13 @@ function showQR(which){
   }
   if(which==="c24") buildGiro();
 }
-function zweck(){
-  const n = $("zName").value.trim() || "[Name]";
-  return `${n} - Absage - ${new Date().toLocaleDateString("de-DE")}`;
-}
-function buildZweck(){ $("zweckText").textContent = zweck(); }
-function copyZweck(){ copy(zweck()); }
 function buildGiro(){
   const betrag = parseFloat($("c24Betrag").value);
   const payload = [
     "BCD","002","1","SCT", CONFIG.BIC, CONFIG.KONTOINHABER,
     CONFIG.IBAN.replace(/\s/g,""),
     betrag>0 ? "EUR"+betrag.toFixed(2) : "", "", "",
-    zweck().slice(0,140)
+    "Mannschaftskasse"
   ].join("\n");
   $("qrC24Box").innerHTML="";
   new QRCode($("qrC24Box"), {text: payload, width:200, height:200, correctLevel: QRCode.CorrectLevel.M});
