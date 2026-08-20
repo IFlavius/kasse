@@ -1,6 +1,8 @@
 # 🏐 Mannschaftskasse L.E. Volleys IV
 
-Web-Dashboard für die Mannschaftskasse: Kassenstand, offene Strafen, Zahlungseingänge, Strafenkatalog und QR-Codes zum Bezahlen. Read-only für alle Spieler, Admin-Bereich passwortgeschützt.
+Web-Dashboard für die Mannschaftskasse: Kassenstand, Absagen pro Spieler, offene Beträge, Zahlungseingänge und QR-Codes zum Bezahlen. Read-only für alle Spieler, Admin-Bereich passwortgeschützt.
+
+**Live:** https://iflavius.github.io/kasse
 
 ---
 
@@ -27,184 +29,214 @@ index.html (GitHub Pages) ◄── liest ────┤
         └── Admin "Kassensturz" ── setzt Status ──► "Im C24-Pocket verschoben"
 ```
 
-Kein eigener Server nötig. Google Sheet = Datenbank, Apps Script = API, GitHub Pages = Hosting. Alles kostenlos.
+Kein eigener Server. Google Sheet = Datenbank, Apps Script = API, GitHub Pages = Hosting. Alles kostenlos.
 
-### Warum Apps Script statt Google-Sheets-API direkt?
+> ⚠️ **Die wichtigste Regel des Projekts:** `index.html` und `Code.gs` müssen zusammenpassen — sie einigen sich auf dieselben JSON-Feldnamen. Wird eine geändert, im Zweifel beide tauschen. Und Änderungen am Skript brauchen **immer eine neue Bereitstellung**, Speichern allein reicht nicht.
 
-Die Sheets-API bräuchte einen API-Key im Frontend (unsicher, jeder kann ihn im Quelltext lesen) oder OAuth-Login (nervig für die Spieler). Apps Script läuft unter *deinem* Google-Account, prüft das Admin-Passwort serverseitig und liefert nur die Daten zurück, die es soll.
+### Warum Apps Script statt Google-Sheets-API?
 
-### Datensicherheit — es geht nichts verloren
-
-1. **Google Drive Cloud** — Sheet liegt redundant bei Google, Handy/Laptop kaputt ist egal
-2. **Versionsverlauf** — `Datei → Versionsverlauf` stellt jeden Stand der Saison wieder her
-3. **Monats-Backup** — `backupTriggerAnlegen()` im Apps Script einmal ausführen, dann landet am 1. jedes Monats eine Kopie im Drive-Ordner „Baggerkasse-Backups"
-4. **Append-only-Prinzip** — die App löscht nie Zeilen, sie ändert nur die Status-Spalte. Am Saisonende hast du ein lückenloses Kassenbuch.
+Die Sheets-API bräuchte einen API-Key im Frontend (unsicher, steht im Quelltext) oder OAuth-Login (nervig für die Spieler). Apps Script läuft unter deinem Google-Account, prüft das Admin-Passwort serverseitig und liefert nur aggregierte Daten zurück.
 
 ---
 
-## 2. Setup am Laptop — Schritt für Schritt
+## 2. Die Regel (in der App hinterlegt)
 
-Gesamtdauer ca. 45 Minuten. Reihenfolge einhalten, jeder Schritt braucht das Ergebnis des vorherigen.
+Es gibt genau **einen** Strafgrund: Wer sich anmeldet und dann weniger als 24 Stunden vor dem Training ohne wichtigen Grund absagt, zahlt.
 
-### Schritt 1 — Google Sheet anlegen (5 Min)
+| Absage | Kostet |
+|---|---|
+| 1. Mal | Verwarnung – 0 € |
+| 2. Mal | 1,00 € + weniger Spielzeit am Spieltag |
+| jedes weitere | × 1,5 vom vorherigen |
 
-1. [sheets.new](https://sheets.new) → neues Sheet, Name z.B. „Mannschaftskasse LEV IV"
-2. Tab unten umbenennen in **`Kasse`** (exakt so, das Skript sucht danach)
-3. Zeile 1 als Header ausfüllen:
+Ergibt: 3. Mal 1,50 € · 4. Mal 2,25 € · 5. Mal 3,38 € · 6. Mal 5,06 €
+
+**Eintragen dauert zwei Sekunden:** Im Admin-Bereich nur den Namen tippen (Autovervollständigung aus bisherigen Spielern), die Vorschau zeigt sofort „Jonas · 4. Absage → 2,25 €", dann „Eintragen". Nummer und Betrag berechnet die App selbst aus der Sheet-Historie.
+
+**Dashboard:** Eine Zeile pro Spieler mit Absage-Anzahl, Punkte-Anzeige, offenem Betrag und was die nächste kosten würde. Farbcodiert: rot = offener Betrag, gelb = Verwarnung, grün = bezahlt.
+
+> **Wichtig:** Der Zähler matcht über den Namen. Immer gleich schreiben — nicht mal „Paul", mal „Paul M.", sonst zählt die App zwei Spieler.
+
+---
+
+## 3. Das Google Sheet
+
+Tab-Name muss exakt **`Kasse`** lauten. Header in Zeile 1:
 
 | A | B | C | D | E | F |
 |---|---|---|---|---|---|
 | Datum | Name | Grund | Betrag | Typ | Status |
 
-**Spaltenwerte:**
-- **Typ:** `Strafe` (offene Forderung) oder `Zahlung` (Geldeingang)
-- **Status Strafe:** `Offen` / `Bezahlt` / `Verwarnung`
-- **Status Zahlung:** `Auf PayPal` / `Im C24-Pocket verschoben`
+**Erlaubte Werte — hier entstehen die meisten Fehler:**
 
-Zum Testen zwei Beispielzeilen eintragen:
+| Typ | Erlaubter Status | Bedeutung |
+|---|---|---|
+| `Strafe` | `Offen` | Absage, noch nicht bezahlt |
+| `Strafe` | `Bezahlt` | erledigt |
+| `Strafe` | `Verwarnung` | 1. Absage, **Betrag muss 0 sein** |
+| `Zahlung` | `Auf PayPal` | Geld eingegangen, liegt noch bei PayPal |
+| `Zahlung` | `Im C24-Pocket verschoben` | manuell aufs Konto übertragen |
 
-| 21.07.2026 | Paul | Zu spät zum Training | 2,50 | Strafe | Offen |
-| 22.07.2026 | Marie | Strafe 14.07. | 2,50 | Zahlung | Auf PayPal |
+Häufige Fehler: `Offen` bei einer **Zahlung** (gibt es nicht — muss `Auf PayPal` sein) und eine Verwarnung mit Betrag 1 statt 0.
 
-### Schritt 2 — Apps Script einrichten (10 Min)
+Die App ist bewusst tolerant gebaut: Eine Zahlung mit unbekanntem Status gilt als „noch auf PayPal" und taucht im nächsten Kassensturz auf, statt still verloren zu gehen.
+
+**Append-only:** Es werden nie Zeilen gelöscht, nur die Status-Spalte geändert. Am Saisonende steht dort ein lückenloses Kassenbuch.
+
+---
+
+## 4. Setup — Schritt für Schritt
+
+### Schritt 1 — Sheet anlegen (5 Min)
+
+[sheets.new](https://sheets.new) → Tab unten umbenennen in `Kasse` → Header aus Abschnitt 3 eintragen. Zum Testen zwei Zeilen:
+
+| 21.07.2026 | Paul | Spontane Absage (2. Mal) | 1 | Strafe | Offen |
+| 22.07.2026 | Marie | Absage | 1 | Zahlung | Auf PayPal |
+
+### Schritt 2 — Apps Script (10 Min)
 
 1. Im Sheet: **Erweiterungen → Apps Script**
-2. Den vorhandenen Beispielcode löschen, kompletten Inhalt von `Code.gs` einfügen, speichern (Strg+S)
-3. **Zahnrad (Projekteinstellungen) → Skript-Eigenschaften → Eigenschaft hinzufügen:**
-   - Name: `ADMIN_PASS`
-   - Wert: dein Kassenwart-Passwort
-4. **Bereitstellen → Neue Bereitstellung → Zahnrad → Web-App**
-   - Beschreibung: „v1"
+2. Beispielcode löschen, kompletten Inhalt von `Code.gs` einfügen, speichern
+3. Projekt oben links benennen — nicht „Unbenanntes Projekt" lassen, der Name taucht in jedem Berechtigungsdialog auf
+4. **Zahnrad → Skript-Eigenschaften → Eigenschaft hinzufügen:** `ADMIN_PASS` = dein Passwort
+5. **Bereitstellen → Neue Bereitstellung → Zahnrad → Web-App**
    - Ausführen als: **Ich**
-   - Zugriff: **Jeder** ← wichtig, sonst können die Spieler nichts lesen
-5. Beim ersten Mal Google-Berechtigungen bestätigen („Erweitert" → „Zu Projekt wechseln" → Zulassen)
-6. Die angezeigte URL kopieren, endet auf `/exec`
+   - Zugriff: **Jeder** ← nicht „Jeder mit Google-Konto"
+6. Berechtigungen bestätigen. Die Warnung *„This app hasn't been verified"* ist normal — die unverifizierte App bist du selbst. Über **Advanced → Go to … (unsafe)** → Allow.
+   - *Sheets-Zugriff* braucht das Skript zwingend. *Drive-Zugriff* kommt nur von der Backup-Funktion; wer das nicht will, löscht `backupTriggerAnlegen` und `monatsBackup_` am Ende von `Code.gs`.
+7. URL kopieren — endet auf `/exec`, **nicht** `/dev`
 
-**Backup aktivieren:** Oben im Editor die Funktion `backupTriggerAnlegen` auswählen → „Ausführen". Einmalig, danach läuft es automatisch.
+**Backup aktivieren:** Im Editor die Funktion `backupTriggerAnlegen` auswählen → Ausführen. Einmalig, danach automatisch.
 
 ### Schritt 3 — index.html konfigurieren (5 Min)
 
-Datei im Texteditor öffnen (VS Code, Notepad++, oder Notepad tut's auch). Etwa Zeile 380, `CONFIG`-Block:
+Etwa Zeile 327, `CONFIG`-Block:
 
 ```js
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfy.../exec",  // aus Schritt 2
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfy.../exec",
   PAYPAL_ME:       "https://paypal.me/DeinName",
-  IBAN:            "DE00 0000 0000 0000 0000 00",   // C24 Pocket IBAN
+  IBAN:            "DE00 0000 0000 0000 0000 00",   // C24 Pocket
   KONTOINHABER:    "Jakob Gross",                    // ohne Umlaute
-  BIC:             "",                               // optional, darf leer bleiben
+  BIC:             "",                               // darf leer bleiben
 };
 ```
 
-Speichern. Datei per Doppelklick im Browser öffnen — der gelbe Demo-Banner muss verschwunden sein und deine Sheet-Testzeilen erscheinen. **Wenn das hier nicht klappt, nicht weitermachen** — Fehler auf GitHub zu suchen ist deutlich unangenehmer.
+> ⚠️ **Nicht per Doppelklick testen.** Bei `file://` blockiert Chrome den Abruf („'file:' URLs are treated as unique security origins"). Entweder lokalen Server starten — im Explorer in den Ordner, `cmd` in die Adressleiste, dann `python -m http.server 8000` und http://localhost:8000 aufrufen — oder direkt zu GitHub Pages hochladen und dort testen.
 
 ### Schritt 4 — GitHub Pages (15 Min)
 
-1. Account auf [github.com](https://github.com) anlegen (falls noch nicht vorhanden)
-2. **New repository** → Name z.B. `kasse` → **Public** (nötig für kostenlose Pages) → Create
-3. **Add file → Upload files** → `index.html` und `README.md` reinziehen → Commit
-4. **Settings → Pages** → Source: „Deploy from a branch", Branch: `main`, Ordner: `/ (root)` → Save
-5. 1–2 Minuten warten, dann ist die Seite unter `https://DEINNAME.github.io/kasse` live
+1. **New repository** → Name z.B. `baggerkasse` (steht später im Link) → **Public** → Create
+2. Dateien hochladen, oder gleich per VS Code (Abschnitt 5)
+3. **Settings → Pages** → Source „Deploy from a branch", Branch `main`, Ordner `/ (root)` → Save
+4. 1–2 Minuten warten → live unter `https://iflavius.github.io/baggerkasse`
 
-> **Wichtig:** Das Repo ist public, also ist auch der Quelltext lesbar. Deine IBAN und der PayPal-Link stehen darin. Das ist unkritisch (eine IBAN erlaubt keine Abbuchung), aber sei dir dessen bewusst. Das **Admin-Passwort steht nicht im Code** — es wird nur serverseitig im Apps Script geprüft.
+> Das Repo ist public, der Quelltext also lesbar. IBAN und PayPal-Link stehen darin — unkritisch, eine IBAN erlaubt keine Abbuchung. Das **Admin-Passwort steht nicht im Code**, es wird nur serverseitig geprüft.
 
-### Schritt 5 — Eigene Domain (optional, 10 Min)
+### Schritt 5 — Make.com anpassen (5 Min)
 
-1. Domain kaufen (Netcup / INWX / Hetzner, ca. 5–15 €/Jahr)
-2. Im Repo: **Add file → Create new file** → Name `CNAME`, Inhalt nur die Domain: `baggerkasse.de`
-3. Beim Domain-Anbieter vier A-Records anlegen auf:
-   ```
-   185.199.108.153
-   185.199.109.153
-   185.199.110.153
-   185.199.111.153
-   ```
-4. In Settings → Pages die Domain eintragen und **„Enforce HTTPS"** anhaken (erscheint erst, wenn das Zertifikat ausgestellt ist, kann eine Stunde dauern)
-
-### Schritt 6 — Make.com anpassen (5 Min)
-
-Ans Ende deines PayPal-Szenarios ein **Google Sheets → Add a Row**-Modul:
+Ans Ende des PayPal-Szenarios ein **Google Sheets → Add a Row**-Modul:
 
 | Spalte | Wert |
 |---|---|
 | Datum | `{{now}}` |
-| Name | Zahler-Name aus dem Webhook |
+| Name | Zahler-Name |
 | Grund | Verwendungszweck / Note |
 | Betrag | Betrag |
 | Typ | `Zahlung` (fest) |
 | Status | `Auf PayPal` (fest) |
 
-### Schritt 7 — Testlauf
+### Schritt 6 — Testlauf
 
 1. Admin-Bereich öffnen (Link ganz unten), Passwort eingeben
-2. Testweise eine Strafe eintragen → muss als neue Zeile im Sheet auftauchen
-3. „Wöchentlichen Kassensturz machen" durchklicken → Status der Zahlung im Sheet muss auf „Im C24-Pocket verschoben" springen
+2. Absage eintragen → muss als neue Zeile im Sheet erscheinen
+3. Kassensturz durchklicken → Status der Zahlung springt auf „Im C24-Pocket verschoben"
 4. Testzeilen im Sheet löschen, Link ins Team teilen
+
+### Optional — eigene Domain
+
+Domain kaufen (Netcup/INWX/Hetzner, 5–15 €/Jahr), im Repo eine Datei `CNAME` mit nur der Domain anlegen, beim Anbieter vier A-Records setzen:
+
+```
+185.199.108.153   185.199.109.153   185.199.110.153   185.199.111.153
+```
+
+Dann in Settings → Pages eintragen und „Enforce HTTPS" anhaken — erscheint erst, wenn das Zertifikat ausgestellt ist.
 
 ---
 
-## 3. Späteres Anpassen
+## 5. Workflow zum Anpassen
 
-**Kleinigkeiten (Texte, Beträge, Farben, CONFIG):** direkt auf GitHub — Datei öffnen, Stift-Symbol, ändern, „Commit changes". Nach ~1 Minute ist die Seite aktualisiert. Geht auch vom Handy.
+**Einmalig einrichten:** Git installieren ([git-scm.com](https://git-scm.com)), in VS Code `Strg+Shift+G` → „Clone Repository" → „Clone from GitHub" → Repo wählen. GitHub Desktop ist damit überflüssig.
 
-**Größere Änderungen:** Datei bei Claude hochladen und beschreiben, was rein soll. **Wichtig:** immer die *aktuelle* Version hochladen, sonst gehen deine zwischenzeitlichen Anpassungen verloren.
+**Danach jede Änderung:** Datei bearbeiten und speichern → Source Control → Nachricht tippen → Commit → Sync Changes. Nach ~1 Minute ist Pages aktualisiert.
 
-**Wenn nach einer Änderung nichts passiert:** Browser-Cache. Strg+Shift+R erzwingt Neuladen.
+**Komfort:** In den VS-Code-Settings `git.postCommitCommand` auf `push` setzen — dann entfällt der zweite Klick.
 
-### Wo was in der Datei steht
+**Größere Änderungen über Claude:** Aktuelle Datei hochladen und beschreiben, was rein soll. Immer die *aktuelle* Version schicken, sonst gehen zwischenzeitliche Anpassungen verloren.
+
+### Wo was in `index.html` steht
 
 | Was | Wo |
 |---|---|
-| Farben, Design | `:root { }` ganz oben im `<style>` |
-| Strafenkatalog-Text | Sektion `<!-- Strafenkatalog -->` |
-| PayPal-Link, IBAN | `const CONFIG` im `<script>` |
-| Absage-Staffel (×1,5) | Funktion `absageStrafe()` |
+| Farben, Design | `:root { }` oben im `<style>` |
+| Regel-Text fürs Team | Sektion `<!-- Regel -->` |
+| PayPal-Link, IBAN | `const CONFIG` im `<script>`, ~Zeile 327 |
+| Staffel-Berechnung | Funktion `strafe(n)` |
 
 ---
 
-## 4. Strafenkatalog (in der App hinterlegt)
+## 6. Troubleshooting
 
-Gilt bei Absage weniger als 24 Stunden vor dem Training, nachdem man sich angemeldet hatte:
+| Symptom | Ursache | Fix |
+|---|---|---|
+| „Verbindung zum Sheet fehlgeschlagen", `/exec`-URL zeigt im Browser aber sauberes JSON | Seite läuft über `file://` | über localhost oder GitHub Pages öffnen |
+| `/exec`-URL zeigt Login-Seite | Zugriff nicht auf „Jeder" | Bereitstellungen verwalten → Stift → Zugriff ändern |
+| `/exec`-URL zeigt Fehlerseite | Tab heißt nicht exakt `Kasse` | Tab umbenennen |
+| Kassenstand da, aber alle Listen leer/0 | `index.html` und `Code.gs` aus verschiedenen Versionen | beide tauschen, Skript neu bereitstellen |
+| Änderung am Skript wirkt nicht | nur gespeichert, nicht bereitgestellt | Bereitstellen → Verwalten → Stift → Version: **Neu** |
+| Änderung an der Seite wirkt nicht | Browser-Cache | `Strg+Shift+R` |
+| Betrag im Pocket, obwohl nichts überwiesen | Zahlung mit falschem Status im Sheet | Status auf `Auf PayPal` korrigieren |
 
-| Absage | Konsequenz |
-|---|---|
-| 1. Mal | Verwarnung (wird mit 0 € protokolliert) |
-| 2. Mal | 1,00 € + weniger Spielzeit am Spieltag |
-| jedes weitere | × 1,5 vom vorherigen Betrag |
-
-Ergibt: 3. Mal 1,50 € · 4. Mal 2,25 € · 5. Mal 3,38 € · 6. Mal 5,06 €
-
-**Absage-Zähler:** Das Dashboard hat eine eigene Sektion, die für jeden Spieler zeigt, wie viele Absagen er in der Saison hat und was die nächste kosten würde. Die Verwarnung beim 1. Mal wird dort sichtbar — sie kostet 0 €, taucht also nicht unter „offene Strafen" auf, ist aber lückenlos dokumentiert. Für alle sichtbar, das ist die eigentliche Abschreckung.
-
-**Eintragen:** Im Admin-Formular „Spontane Absage" wählen und den Namen tippen — die App zählt die bisherigen Absagen selbst und schlägt Nummer und Betrag automatisch vor. Nur bei abweichender Schreibweise des Namens (z.B. „Paul" vs. „Paul M.") musst du die Nummer korrigieren.
+Zum Eingrenzen immer zuerst die `/exec`-URL direkt im Browser-Tab aufrufen — was dort steht, trennt Backend- von Frontend-Problemen. Danach F12 → Console.
 
 ---
 
-## 5. Offene Entscheidung: PayPal Pool
+## 7. Datensicherheit
 
-Alternative zum PayPal.me-Setup. Ein Pool läuft maximal 6 Monate, das Enddatum ist vorher jederzeit verschiebbar, Geld bleibt auch nach Ablauf abrufbar. Vorteil: Alle sehen die gesammelte Summe.
+1. **Google Drive Cloud** — Sheet liegt redundant bei Google, Hardware-Defekt egal
+2. **Versionsverlauf** — `Datei → Versionsverlauf` stellt jeden Stand der Saison wieder her
+3. **Monats-Backup** — `backupTriggerAnlegen()` einmal ausführen, dann landet am 1. jedes Monats eine Kopie im Drive-Ordner „Baggerkasse-Backups"
+4. **Append-only** — die App löscht nie Zeilen
 
-**Vor der Umstellung unbedingt testen:** ob Pool-Einzahlungen dieselben Make.com-Webhook-Events auslösen wie normale Zahlungen. Falls nicht, müsstest du Eingänge manuell ins Sheet eintragen — dann lohnt sich der Wechsel nicht.
+---
+
+## 8. Offene Entscheidung: PayPal Pool
+
+Alternative zum PayPal.me-Setup. Ein Pool läuft maximal 6 Monate, das Enddatum ist vorher verschiebbar, Geld bleibt auch nach Ablauf abrufbar. Vorteil: Alle sehen die gesammelte Summe, Einzahler brauchen kein PayPal-Konto.
+
+**Vor der Umstellung testen:** ob Pool-Einzahlungen dieselben Make.com-Webhook-Events auslösen wie normale Zahlungen. Falls nicht, müsstest du Eingänge manuell eintragen — dann lohnt der Wechsel nicht.
 
 Der Pool ersetzt das Dashboard nicht: Er zeigt, was reingekommen ist, nicht wer noch schuldet. Und er überlebt die Saison nicht — das Sheet schon.
 
 ---
 
-## 6. Team-Info für WhatsApp
+## 9. Team-Info für WhatsApp
 
 > 🏐 **Mannschaftskasse ist jetzt online**
 >
-> Ab sofort könnt ihr hier jederzeit sehen, wie es um die Kasse steht:
-> 👉 https://DEINLINK
+> Ab sofort könnt ihr jederzeit sehen, wie es um die Kasse steht:
+> 👉 https://iflavius.github.io/kasse/
 >
 > Was ihr da findet:
 > • aktueller Kassenstand
-> • wer noch offene Strafen hat
-> • den kompletten Strafenkatalog
+> • wer wie oft abgesagt hat und was noch offen ist
+> • die Regel im Klartext
 > • QR-Codes zum direkt Bezahlen (PayPal oder Überweisung)
 >
 > Kein Login, keine App-Installation — einfach Link öffnen. Am besten zum Startbildschirm hinzufügen.
 >
-> ⚠️ Wichtig beim Zahlen: **Verwendungszweck nicht vergessen** (Name – Grund – Datum), sonst kann ich die Zahlung nicht zuordnen. In der App gibt's dafür einen Button, der euch den Text fertig zum Kopieren baut.
+> ⚠️ Wichtig beim Zahlen: **Verwendungszweck nicht vergessen** (Name – Absage – Datum), sonst kann ich die Zahlung nicht zuordnen. In der App gibt's dafür einen Button, der den Text fertig zum Kopieren baut.
 >
 > Fragen → an mich.
