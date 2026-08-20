@@ -9,37 +9,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
-  --court:#0B1220;        /* Hallenboden bei Nacht */
-  --panel:#141E32;        /* Anzeigetafel-Panel */
-  --panel-2:#1B2740;
-  --line:#26334F;         /* Spielfeldlinien */
-  --ink:#EDF1F8;
-  --ink-dim:#8DA0BF;
-  --mikasa-gelb:#FFC400;  /* Ballfarbe */
-  --mikasa-blau:#3D6BFF;  /* Ballfarbe */
-  --pfiff-rot:#FF5C5C;    /* offene Strafen */
-  --netz-gruen:#3ECF8E;   /* verbucht */
+  --court:#0B1220; --panel:#141E32; --panel-2:#1B2740; --line:#26334F;
+  --ink:#EDF1F8; --ink-dim:#8DA0BF;
+  --mikasa-gelb:#FFC400; --mikasa-blau:#3D6BFF;
+  --pfiff-rot:#FF5C5C; --netz-gruen:#3ECF8E;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{font-size:16px}
 body{
-  background:var(--court);
-  color:var(--ink);
-  font-family:'Inter',system-ui,-apple-system,sans-serif;
-  min-height:100dvh;
-  padding-bottom:110px;
+  background:var(--court);color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;min-height:100dvh;padding-bottom:110px;
 }
 .display{font-family:'Anton',Impact,sans-serif;letter-spacing:.02em}
 
-/* ---------- Header mit Netz-Textur ---------- */
 header{
   padding:calc(env(safe-area-inset-top) + 20px) 20px 18px;
   background:
     repeating-linear-gradient(0deg, rgba(141,160,191,.07) 0 1px, transparent 1px 14px),
     repeating-linear-gradient(90deg, rgba(141,160,191,.07) 0 1px, transparent 1px 14px),
     linear-gradient(180deg,#101A2E 0%,var(--court) 100%);
-  border-bottom:2px solid var(--line);
-  display:flex;align-items:center;gap:14px;
+  border-bottom:2px solid var(--line);display:flex;align-items:center;gap:14px;
 }
 .ball{width:46px;height:46px;flex-shrink:0}
 header h1{font-size:1.7rem;line-height:1;color:var(--mikasa-gelb)}
@@ -47,34 +35,22 @@ header .sub{font-size:.72rem;font-weight:600;color:var(--ink-dim);text-transform
 
 main{max-width:520px;margin:0 auto;padding:18px 16px 0}
 
-/* ---------- Anzeigetafel (Signature) ---------- */
+/* Anzeigetafel */
 .scoreboard{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:22px 20px 18px;
-  text-align:center;
-  position:relative;
-  overflow:hidden;
+  background:var(--panel);border:1px solid var(--line);border-radius:18px;
+  padding:22px 20px 18px;text-align:center;position:relative;overflow:hidden;
 }
-.scoreboard::before{ /* Ball-Nahtlinie */
+.scoreboard::before{
   content:"";position:absolute;inset:-40% -20% auto;height:180%;
-  border-radius:50%;
-  border:2px solid rgba(61,107,255,.14);
-  pointer-events:none;
+  border-radius:50%;border:2px solid rgba(61,107,255,.14);pointer-events:none;
 }
 .scoreboard .label{font-size:.72rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim)}
 .scoreboard .amount{
-  font-family:'Anton',Impact,sans-serif;
-  font-size:clamp(3.2rem,16vw,4.6rem);
-  color:var(--mikasa-gelb);
-  line-height:1.05;
-  font-variant-numeric:tabular-nums;
+  font-family:'Anton',Impact,sans-serif;font-size:clamp(3.2rem,16vw,4.6rem);
+  color:var(--mikasa-gelb);line-height:1.05;font-variant-numeric:tabular-nums;
   text-shadow:0 0 24px rgba(255,196,0,.25);
 }
-.scoreboard .split{
-  display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;
-}
+.scoreboard .split{display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
 .chip{
   font-size:.78rem;font-weight:600;padding:6px 12px;border-radius:999px;
   border:1px solid var(--line);background:var(--panel-2);color:var(--ink-dim);
@@ -84,7 +60,6 @@ main{max-width:520px;margin:0 auto;padding:18px 16px 0}
 .chip.paypal b{color:var(--mikasa-blau)}
 .chip.pocket b{color:var(--netz-gruen)}
 
-/* ---------- Sektionen ---------- */
 section{margin-top:26px}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;border-bottom:2px solid var(--line);padding-bottom:8px}
 .sec-head h2{font-size:1.05rem;font-weight:700}
@@ -98,44 +73,35 @@ section{margin-top:26px}
 }
 .row .who{flex:1;min-width:0}
 .row .who .name{font-weight:600;font-size:.95rem}
-.row .who .why{font-size:.8rem;color:var(--ink-dim);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .who .why{font-size:.8rem;color:var(--ink-dim);margin-top:2px}
 .row .amt{font-family:'Anton',sans-serif;font-size:1.15rem;font-variant-numeric:tabular-nums;flex-shrink:0}
-.row.fine{border-left:4px solid var(--pfiff-rot)}
-.row.fine .amt{color:var(--pfiff-rot)}
-.status{
-  font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
-  padding:4px 8px;border-radius:6px;flex-shrink:0;
-}
+.row.offen{border-left:4px solid var(--pfiff-rot)}
+.row.offen .amt{color:var(--pfiff-rot)}
+.row.warn{border-left:4px solid var(--mikasa-gelb)}
+.row.clean{border-left:4px solid var(--netz-gruen)}
+.row.clean .amt{font-size:.8rem;font-family:'Inter';color:var(--netz-gruen);font-weight:700}
+.tally{display:flex;gap:4px;margin-top:6px}
+.tally span{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.tally span.on{background:var(--mikasa-gelb)}
+.tally span.hot{background:var(--pfiff-rot)}
+.status{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 8px;border-radius:6px;flex-shrink:0}
 .status.paypal{background:rgba(61,107,255,.16);color:#7C9BFF}
 .status.pocket{background:rgba(62,207,142,.14);color:var(--netz-gruen)}
 .empty{color:var(--ink-dim);font-size:.88rem;text-align:center;padding:22px 10px;background:var(--panel);border:1px dashed var(--line);border-radius:14px}
 
-/* ---------- Strafenkatalog ---------- */
+/* Regeln */
 .rules{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
-.rules-title{font-weight:700;font-size:.95rem}
-.rules-sub{font-size:.8rem;color:var(--ink-dim);margin:4px 0 12px}
+.rules-sub{font-size:.85rem;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.rules-sub b{color:var(--mikasa-gelb)}
 .rules table{width:100%;border-collapse:collapse;font-size:.85rem;margin-bottom:14px}
 .rules th{text-align:left;background:var(--mikasa-blau);color:#fff;padding:8px 10px;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
 .rules td{padding:9px 10px;border-bottom:1px solid var(--line)}
-.rules td:last-child{color:var(--ink)}
-.rules ul{list-style:none;display:flex;flex-direction:column;gap:8px}
-.rules li{font-size:.82rem;color:var(--ink-dim);padding-left:20px;position:relative;line-height:1.45}
-.rules li::before{content:"🏐";position:absolute;left:0;top:2px;font-size:.7rem}
-.absage-hint{font-size:.8rem;color:var(--mikasa-gelb);margin:-4px 0 10px}
+.rules p{font-size:.82rem;color:var(--ink-dim);line-height:1.45}
 
-/* ---------- Absage-Zähler ---------- */
-.row.warn{border-left:4px solid var(--mikasa-gelb)}
-.tally{display:flex;gap:4px;margin-top:5px}
-.tally span{width:9px;height:9px;border-radius:50%;background:var(--line)}
-.tally span.on{background:var(--mikasa-gelb)}
-.tally span.hot{background:var(--pfiff-rot)}
-.next-cost{font-size:.7rem;color:var(--ink-dim);text-align:right;flex-shrink:0;line-height:1.3}
-.next-cost b{display:block;font-family:'Anton',sans-serif;font-size:1.05rem;color:var(--mikasa-gelb)}
-
-/* ---------- Buttons ---------- */
+/* Buttons */
 .btn{
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  width:100%;min-height:58px;border:none;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+  min-height:58px;border:none;border-radius:16px;
   font-family:'Inter',sans-serif;font-size:1.05rem;font-weight:700;
   cursor:pointer;transition:transform .08s, filter .15s;
 }
@@ -146,7 +112,6 @@ section{margin-top:26px}
 .btn-gruen{background:var(--netz-gruen);color:#04220F}
 .btn[disabled]{filter:grayscale(.6) brightness(.6);cursor:not-allowed}
 
-/* ---------- Sticky Bottom Bar ---------- */
 .bottombar{
   position:fixed;left:0;right:0;bottom:0;z-index:40;
   padding:12px 16px calc(env(safe-area-inset-bottom) + 12px);
@@ -154,39 +119,27 @@ section{margin-top:26px}
 }
 .bottombar .btn{max-width:520px;margin:0 auto;box-shadow:0 8px 28px rgba(255,196,0,.28)}
 
-/* ---------- Modal ---------- */
-.modal-bg{
-  position:fixed;inset:0;background:rgba(4,8,16,.78);backdrop-filter:blur(4px);
-  z-index:50;display:none;align-items:flex-end;justify-content:center;
-}
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(4,8,16,.78);backdrop-filter:blur(4px);z-index:50;display:none;align-items:flex-end;justify-content:center}
 .modal-bg.open{display:flex}
 .modal{
   background:var(--panel);border:1px solid var(--line);border-radius:22px 22px 0 0;
   width:100%;max-width:520px;max-height:88dvh;overflow-y:auto;
-  padding:22px 20px calc(env(safe-area-inset-bottom) + 22px);
-  animation:up .22s ease;
+  padding:22px 20px calc(env(safe-area-inset-bottom) + 22px);animation:up .22s ease;
 }
 @keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.modal{animation:none}.btn:active{transform:none}}
 .modal h3{font-size:1.25rem;margin-bottom:4px}
 .modal .hint{font-size:.85rem;color:var(--ink-dim);margin-bottom:18px}
-.modal .close{
-  position:sticky;top:0;float:right;background:var(--panel-2);border:1px solid var(--line);
-  color:var(--ink);width:38px;height:38px;border-radius:50%;font-size:1.1rem;cursor:pointer;
-}
+.modal .close{position:sticky;top:0;float:right;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);width:38px;height:38px;border-radius:50%;font-size:1.1rem;cursor:pointer}
 .pay-options{display:flex;flex-direction:column;gap:12px}
 .qr-wrap{display:none;margin-top:16px}
 .qr-wrap.open{display:block}
 .qr-box{background:#fff;border-radius:16px;padding:16px;width:fit-content;margin:0 auto}
-.qr-box img,.qr-box canvas{display:block}
-.zweck{
-  margin-top:16px;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:14px;
-}
+.zweck{margin-top:16px;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:14px}
 .zweck .warn{font-weight:800;font-size:.92rem;color:var(--mikasa-gelb);margin-bottom:10px}
-.zweck code{
-  display:block;background:var(--court);border-radius:10px;padding:12px;
-  font-size:.92rem;word-break:break-all;color:var(--ink);margin-bottom:10px;
-}
+.zweck code{display:block;background:var(--court);border-radius:10px;padding:12px;font-size:.92rem;word-break:break-all;color:var(--ink);margin-bottom:10px}
+
 input,select{
   width:100%;background:var(--court);border:1px solid var(--line);border-radius:12px;
   color:var(--ink);font-size:1rem;padding:13px 14px;font-family:inherit;margin-bottom:10px;
@@ -194,7 +147,6 @@ input,select{
 input:focus,select:focus,.btn:focus-visible{outline:2px solid var(--mikasa-gelb);outline-offset:2px}
 label{font-size:.78rem;font-weight:600;color:var(--ink-dim);display:block;margin-bottom:5px}
 
-/* ---------- Admin ---------- */
 #adminPanel{display:none}
 #adminPanel.open{display:block}
 .admin-box{background:var(--panel);border:1px solid var(--mikasa-blau);border-radius:18px;padding:18px;margin-top:12px}
@@ -204,6 +156,12 @@ label{font-size:.78rem;font-weight:600;color:var(--ink-dim);display:block;margin
 .copyline{display:flex;gap:8px;margin:12px 0}
 .copyline code{flex:1;background:var(--court);border-radius:10px;padding:12px;font-size:.9rem;word-break:break-all}
 .copyline .btn{width:auto;min-height:auto;padding:0 16px;font-size:.85rem}
+.preview{
+  background:var(--panel-2);border:1px solid var(--line);border-radius:12px;
+  padding:12px;margin-bottom:12px;text-align:center;font-size:.85rem;color:var(--ink-dim);
+}
+.preview b{display:block;font-family:'Anton',sans-serif;font-size:1.6rem;color:var(--mikasa-gelb);margin-top:4px}
+.preview.verwarnung b{color:var(--ink-dim);font-size:1.1rem}
 footer{margin-top:40px;text-align:center;padding-bottom:8px}
 footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;cursor:pointer;text-decoration:underline;padding:10px}
 .toast{
@@ -211,8 +169,7 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
   background:var(--netz-gruen);color:#04220F;font-weight:700;font-size:.9rem;
   padding:12px 20px;border-radius:999px;z-index:99;display:none;white-space:nowrap;
 }
-.demo-banner{background:rgba(255,196,0,.1);border:1px solid rgba(255,196,0,.3);color:var(--mikasa-gelb);
-  font-size:.78rem;border-radius:12px;padding:10px 14px;margin-bottom:16px;display:none}
+.demo-banner{background:rgba(255,196,0,.1);border:1px solid rgba(255,196,0,.3);color:var(--mikasa-gelb);font-size:.78rem;border-radius:12px;padding:10px 14px;margin-bottom:16px;display:none}
 </style>
 </head>
 <body>
@@ -235,7 +192,6 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
     ⚠ Demo-Modus: Noch keine Google-Sheet-Anbindung konfiguriert (CONFIG.APPS_SCRIPT_URL). Es werden Beispieldaten angezeigt.
   </div>
 
-  <!-- Anzeigetafel -->
   <div class="scoreboard">
     <div class="label">Kassenstand</div>
     <div class="amount" id="balance">–</div>
@@ -245,16 +201,16 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
     </div>
   </div>
 
-  <!-- Offene Strafen -->
+  <!-- Spielerliste: Absagen + offener Betrag in einem -->
   <section>
     <div class="sec-head">
-      <h2>🚩 Offene Strafen</h2>
-      <span class="count red" id="fineCount">0</span>
+      <h2>📋 Absagen</h2>
+      <span class="count red" id="openSum">0,00 €</span>
     </div>
-    <div class="card-list" id="fineList"></div>
+    <div class="card-list" id="playerList"></div>
   </section>
 
-  <!-- Letzte Zahlungen -->
+  <!-- Zahlungen -->
   <section>
     <div class="sec-head">
       <h2>💸 Letzte Zahlungen</h2>
@@ -263,31 +219,20 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
     <div class="card-list" id="payList"></div>
   </section>
 
-  <!-- Absage-Zähler -->
+  <!-- Regel -->
   <section>
-    <div class="sec-head">
-      <h2>⚠️ Absage-Zähler</h2>
-      <span class="count" id="warnCount">0</span>
-    </div>
-    <div class="card-list" id="warnList"></div>
-  </section>
-
-  <!-- Strafenkatalog -->
-  <section>
-    <div class="sec-head"><h2>📖 Strafenkatalog</h2></div>
+    <div class="sec-head"><h2>📖 Die Regel</h2></div>
     <div class="rules">
-      <div class="rules-title">Spontane Absage / unangekündigtes Fehlen</div>
-      <div class="rules-sub">Gilt bei Absage weniger als 24 Stunden vor dem Training, nachdem man sich vorher angemeldet hatte.</div>
+      <div class="rules-sub">
+        Wer sich anmeldet und dann <b>weniger als 24 Stunden vor dem Training</b> ohne wichtigen Grund absagt, zahlt in die Kasse.
+      </div>
       <table>
-        <tr><th>Wievielte Absage</th><th>Konsequenz</th></tr>
-        <tr><td>1. Mal</td><td>Verwarnung</td></tr>
-        <tr><td>2. Mal</td><td>1 € in die Kasse + weniger Spielzeit am Spieltag</td></tr>
-        <tr><td>jedes weitere Mal</td><td>Betrag jeweils × 1,5 vom vorherigen</td></tr>
+        <tr><th>Absage</th><th>Kostet</th></tr>
+        <tr><td>1. Mal</td><td>Verwarnung – 0 €</td></tr>
+        <tr><td>2. Mal</td><td>1,00 € + weniger Spielzeit</td></tr>
+        <tr><td>jedes weitere</td><td>× 1,5 vom vorherigen</td></tr>
       </table>
-      <ul>
-        <li>Grundsatz: Wer zuverlässig da ist, selten zu spät kommt und im Training gut abliefert, spielt auch am Spieltag – wer oft fehlt oder absagt, spielt trotz Anwesenheit am Spieltag ggf. nicht.</li>
-        <li>Strafen werden direkt von Jakob eingesammelt.</li>
-      </ul>
+      <p>Wer zuverlässig da ist, spielt auch am Spieltag – wer oft fehlt oder absagt, ggf. nicht. Strafen sammelt Jakob ein.</p>
     </div>
   </section>
 
@@ -296,8 +241,16 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
     <div class="sec-head"><h2>🔧 Kassenwart</h2></div>
 
     <div class="admin-box">
+      <label>Absage eintragen</label>
+      <input id="fName" placeholder="Name" oninput="preview()" list="namen">
+      <datalist id="namen"></datalist>
+      <div class="preview" id="previewBox">Name eingeben …</div>
+      <button class="btn btn-ghost" onclick="addFine()">Eintragen</button>
+    </div>
+
+    <div class="admin-box">
       <div class="sturz-step open" id="sturz1">
-        <button class="btn btn-blau" onclick="startSturz()">Wöchentlichen Kassensturz machen</button>
+        <button class="btn btn-blau" onclick="startSturz()">Kassensturz machen</button>
       </div>
       <div class="sturz-step" id="sturz2">
         <div style="text-align:center;font-size:.85rem;color:var(--ink-dim)">Aktuell auf PayPal (<span id="sturzCount"></span> Zahlungen)</div>
@@ -318,23 +271,6 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
         <button class="btn btn-ghost" onclick="cancelSturz()">Fertig</button>
       </div>
     </div>
-
-    <div class="admin-box">
-      <label>Neue Strafe eintragen</label>
-      <input id="fName" placeholder="Name (z.B. Paul)" oninput="nameChange()">
-      <select id="fKat" onchange="katChange()">
-        <option value="frei">Grund frei eingeben</option>
-        <option value="absage">Spontane Absage / unangekündigtes Fehlen</option>
-      </select>
-      <input id="fGrund" placeholder="Grund (z.B. Shirt vergessen)">
-      <div id="absageBox" style="display:none">
-        <label>Wievielte Absage in dieser Saison?</label>
-        <input id="fAbsageNr" type="number" inputmode="numeric" min="1" step="1" value="2" oninput="absageCalc()">
-        <div class="absage-hint" id="absageHint"></div>
-      </div>
-      <input id="fBetrag" type="number" inputmode="decimal" step="0.50" placeholder="Betrag in € (z.B. 2.50)">
-      <button class="btn btn-ghost" onclick="addFine()">Strafe eintragen</button>
-    </div>
   </section>
 
   <footer>
@@ -342,12 +278,10 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
   </footer>
 </main>
 
-<!-- Sticky Zahlen-Button -->
 <div class="bottombar">
   <button class="btn btn-gelb" onclick="openPay()">🏐 Strafe zahlen</button>
 </div>
 
-<!-- Zahlungs-Modal -->
 <div class="modal-bg" id="payModal" onclick="if(event.target===this)closePay()">
   <div class="modal" role="dialog" aria-label="Strafe zahlen">
     <button class="close" onclick="closePay()" aria-label="Schließen">✕</button>
@@ -359,18 +293,14 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
       <button class="btn btn-ghost" onclick="showQR('c24')">🏦 Direkt aufs C24-Konto</button>
     </div>
 
-    <!-- Verwendungszweck-Bauer -->
     <div class="zweck" id="zweckBox" style="display:none">
-      <div class="warn" id="zweckWarn">⚠ UNBEDINGT als Verwendungszweck angeben:</div>
+      <div class="warn">⚠ UNBEDINGT als Verwendungszweck angeben:</div>
       <label>Dein Name</label>
       <input id="zName" placeholder="Name" oninput="buildZweck()">
-      <label>Grund</label>
-      <input id="zGrund" placeholder="z.B. Zu spät" oninput="buildZweck()">
-      <code id="zweckText">[Name] - [Grund] - [Datum]</code>
+      <code id="zweckText">[Name] – Absage – [Datum]</code>
       <button class="btn btn-ghost" style="min-height:48px" onclick="copyZweck()">Verwendungszweck kopieren</button>
     </div>
 
-    <!-- PayPal QR -->
     <div class="qr-wrap" id="qrPaypal">
       <div class="qr-box" id="qrPaypalBox"></div>
       <p style="text-align:center;font-size:.85rem;color:var(--ink-dim);margin-top:10px">
@@ -378,13 +308,12 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
       </p>
     </div>
 
-    <!-- C24 GiroCode -->
     <div class="qr-wrap" id="qrC24">
       <label style="margin-top:14px">Betrag in €</label>
-      <input id="c24Betrag" type="number" inputmode="decimal" step="0.50" placeholder="z.B. 2.50" oninput="buildGiro()">
+      <input id="c24Betrag" type="number" inputmode="decimal" step="0.50" placeholder="z.B. 1.50" oninput="buildGiro()">
       <div class="qr-box" id="qrC24Box"></div>
       <p style="text-align:center;font-size:.85rem;color:var(--ink-dim);margin-top:10px">
-        GiroCode mit deiner Banking-App scannen – IBAN, Betrag &amp; Verwendungszweck werden automatisch ausgefüllt.
+        GiroCode mit der Banking-App scannen – IBAN, Betrag &amp; Verwendungszweck sind schon drin.
       </p>
     </div>
   </div>
@@ -393,102 +322,98 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
 <div class="toast" id="toast"></div>
 
 <script>
-/* ══════════════════════════ KONFIGURATION ══════════════════════════ */
+/* ══════════════════ KONFIGURATION ══════════════════ */
 const CONFIG = {
-  // URL des bereitgestellten Google Apps Script Web-Apps (siehe Code.gs + ANLEITUNG.md)
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxnoQ9R_0lZdaKY8yFwsTQ72ovhKfT-qZt0TC-PTnWqkQhHwLpAv-upL0KKnb7XPEBE/exec",                    // z.B. "https://script.google.com/macros/s/AKfy.../exec"
   PAYPAL_ME:       "https://paypal.me/JakobJust1",
   IBAN:            "DE12 5002 4024 4780 7851 32",   // C24 Pocket IBAN
   KONTOINHABER:    "Jakob Gross",                    // EPC: keine Umlaute nötig, max 70 Zeichen
-  BIC:             "DEFFDEFFXXX",                               // optional, bei C24: DEFFDEFFXXX o.ä.
+  BIC:             "DEFFDEFFXXX",
 };
-/* ═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════ */
 
 const DEMO = {
-  fines: [
-    {name:"Paul", grund:"Zu spät zum Training", betrag:2.5, datum:"21.07."},
-    {name:"Basti", grund:"Shirt vergessen", betrag:1, datum:"21.07."},
-    {name:"Jonas", grund:"Aufschlag ins Netz (Wette)", betrag:5, datum:"14.07."},
-  ],
   payments: [
-    {name:"Marie", grund:"Strafe 14.07.", betrag:2.5, status:"Auf PayPal", datum:"22.07."},
-    {name:"Tim", grund:"Getränkekasse", betrag:5, status:"Auf PayPal", datum:"20.07."},
-    {name:"Lena", grund:"Strafe 07.07.", betrag:1, status:"Im C24-Pocket verschoben", datum:"15.07."},
+    {name:"Marie", betrag:1, status:"Auf PayPal", datum:"22.07."},
+    {name:"Tim", betrag:1.5, status:"Auf PayPal", datum:"20.07."},
+    {name:"Lena", betrag:1, status:"Im C24-Pocket verschoben", datum:"15.07."},
   ],
-  absagen: [
-    {name:"Jonas", anzahl:3, letzte:"18.07.2026"},
-    {name:"Basti", anzahl:1, letzte:"11.07.2026"},
+  spieler: [
+    {name:"Jonas", anzahl:3, offen:1.5, letzte:"18.07."},
+    {name:"Paul",  anzahl:2, offen:1,   letzte:"21.07."},
+    {name:"Basti", anzahl:1, offen:0,   letzte:"11.07."},
   ]
 };
 
-let state = {fines:[], payments:[], absagen:[], admin:false, adminPass:""};
+let state = {payments:[], spieler:[], admin:false, adminPass:""};
 const eur = n => n.toLocaleString("de-DE",{style:"currency",currency:"EUR"});
 const $ = id => document.getElementById(id);
+const esc = s => String(s??"").replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
+
+/* Staffel: 1. Mal 0 €, ab dem 2. Mal 1 € × 1,5 pro weiterem Mal */
+function strafe(n){ return n < 2 ? 0 : Math.round(100 * Math.pow(1.5, n-2)) / 100; }
 
 async function loadData(){
   if(!CONFIG.APPS_SCRIPT_URL){
     $("demoBanner").style.display="block";
-    state.fines = DEMO.fines; state.payments = DEMO.payments; state.absagen = DEMO.absagen;
+    state.payments = DEMO.payments; state.spieler = DEMO.spieler;
     render(); return;
   }
   try{
     const res = await fetch(CONFIG.APPS_SCRIPT_URL + "?action=data");
     const d = await res.json();
-    state.fines = d.fines; state.payments = d.payments; state.absagen = d.absagen || [];
+    state.payments = d.payments || []; state.spieler = d.spieler || [];
     render();
-  }catch(e){
-    toast("⚠ Verbindung zum Sheet fehlgeschlagen");
-  }
+  }catch(e){ toast("⚠ Verbindung zum Sheet fehlgeschlagen"); }
 }
 
+/* Status-Auswertung bewusst tolerant: Nur wer exakt als verschoben markiert ist,
+   zählt als Pocket. Alles andere (auch Tippfehler im Sheet) gilt als "noch auf PayPal"
+   und taucht damit im nächsten Kassensturz auf, statt still verloren zu gehen. */
+const IM_POCKET = "Im C24-Pocket verschoben";
+const istPocket = p => p.status === IM_POCKET;
+
 function render(){
-  const paypal = state.payments.filter(p=>p.status==="Auf PayPal").reduce((s,p)=>s+p.betrag,0);
-  const pocket = state.payments.filter(p=>p.status!=="Auf PayPal").reduce((s,p)=>s+p.betrag,0);
+  const paypal = state.payments.filter(p=>!istPocket(p)).reduce((s,p)=>s+p.betrag,0);
+  const pocket = state.payments.filter(istPocket).reduce((s,p)=>s+p.betrag,0);
   $("balance").textContent = eur(paypal+pocket);
   $("paypalSum").textContent = eur(paypal);
   $("pocketSum").textContent = eur(pocket);
 
-  $("fineCount").textContent = state.fines.length;
-  $("fineList").innerHTML = state.fines.length ? state.fines.map(f=>`
-    <div class="row fine">
-      <div class="who"><div class="name">${esc(f.name)}</div><div class="why">${esc(f.grund)} · ${esc(f.datum||"")}</div></div>
-      <div class="amt">${eur(f.betrag)}</div>
-    </div>`).join("") :
-    `<div class="empty">Keine offenen Strafen – sauber gebaggert! 🏐</div>`;
-
-  // Absage-Zähler
-  const abs = state.absagen || [];
-  $("warnCount").textContent = abs.length;
-  $("warnList").innerHTML = abs.length ? abs.map(a=>{
-    const naechste = absageStrafe(a.anzahl + 1);
-    const punkte = Array.from({length:Math.max(3,a.anzahl)},(_,i)=>
-      `<span class="${i < a.anzahl ? (i>=2?"hot":"on") : ""}"></span>`).join("");
-    const stand = a.anzahl === 1
-      ? "1 Absage · Verwarnung ausgesprochen"
-      : `${a.anzahl} Absagen`;
+  // Spieler: Absagen + offener Betrag in einer Zeile
+  const sp = [...state.spieler].sort((a,b)=> b.offen-a.offen || b.anzahl-a.anzahl);
+  const offenGesamt = sp.reduce((s,p)=>s+p.offen,0);
+  $("openSum").textContent = eur(offenGesamt);
+  $("playerList").innerHTML = sp.length ? sp.map(p=>{
+    const punkte = Array.from({length:Math.max(3,p.anzahl)},(_,i)=>
+      `<span class="${i<p.anzahl ? (i>=2?"hot":"on") : ""}"></span>`).join("");
+    const cls = p.offen>0 ? "offen" : (p.anzahl===1 ? "warn" : "clean");
+    const rechts = p.offen>0
+      ? `<div class="amt">${eur(p.offen)}</div>`
+      : `<div class="amt">${p.anzahl===1?"Verwarnung":"bezahlt ✓"}</div>`;
     return `
-    <div class="row warn">
+    <div class="row ${cls}">
       <div class="who">
-        <div class="name">${esc(a.name)}</div>
-        <div class="why">${stand}${a.letzte?" · zuletzt "+esc(a.letzte):""}</div>
+        <div class="name">${esc(p.name)}</div>
+        <div class="why">${p.anzahl}× abgesagt${p.letzte?" · zuletzt "+esc(p.letzte):""} · nächste ${eur(strafe(p.anzahl+1))}</div>
         <div class="tally">${punkte}</div>
       </div>
-      <div class="next-cost">nächste kostet<b>${eur(naechste)}</b></div>
+      ${rechts}
     </div>`;
-  }).join("") :
-    `<div class="empty">Keine Absagen registriert – alle zuverlässig! 💪</div>`;
+  }).join("") : `<div class="empty">Keine Absagen – alle zuverlässig! 💪</div>`;
 
   const recent = state.payments.slice(0,8);
   $("payCount").textContent = state.payments.length;
   $("payList").innerHTML = recent.length ? recent.map(p=>`
     <div class="row">
-      <div class="who"><div class="name">${esc(p.name)}</div><div class="why">${esc(p.grund)} · ${esc(p.datum||"")}</div></div>
-      <span class="status ${p.status==="Auf PayPal"?"paypal":"pocket"}">${p.status==="Auf PayPal"?"Auf PayPal":"C24-Pocket"}</span>
+      <div class="who"><div class="name">${esc(p.name)}</div><div class="why">${esc(p.datum||"")}</div></div>
+      <span class="status ${istPocket(p)?"pocket":"paypal"}">${istPocket(p)?"C24-Pocket":"Auf PayPal"}</span>
       <div class="amt">${eur(p.betrag)}</div>
-    </div>`).join("") :
-    `<div class="empty">Noch keine Zahlungen eingegangen.</div>`;
+    </div>`).join("") : `<div class="empty">Noch keine Zahlungen eingegangen.</div>`;
+
+  $("namen").innerHTML = state.spieler.map(p=>`<option value="${esc(p.name)}">`).join("");
+  if(state.admin) preview();
 }
-function esc(s){return String(s??"").replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]))}
 
 /* ───────── Admin ───────── */
 function adminLogin(){
@@ -499,13 +424,61 @@ function adminLogin(){
   $("adminPanel").classList.add("open");
   $("adminToggle").textContent="Admin-Bereich schließen";
   $("adminPanel").scrollIntoView({behavior:"smooth"});
+  preview();
 }
 
-/* 2-Klick-Kassensturz */
+/* Live-Vorschau: welche Absage ist es und was kostet sie */
+function naechsteNr(name){
+  const t = state.spieler.find(p=>p.name.trim().toLowerCase() === name.trim().toLowerCase());
+  return (t ? t.anzahl : 0) + 1;
+}
+function preview(){
+  const name = $("fName").value.trim();
+  const box = $("previewBox");
+  if(!name){ box.className="preview"; box.innerHTML="Name eingeben …"; return; }
+  const n = naechsteNr(name), b = strafe(n);
+  if(b === 0){
+    box.className = "preview verwarnung";
+    box.innerHTML = `${esc(name)} · ${n}. Absage<b>Verwarnung – 0 €</b>`;
+  }else{
+    box.className = "preview";
+    box.innerHTML = `${esc(name)} · ${n}. Absage${n===2?" · + weniger Spielzeit":""}<b>${eur(b)}</b>`;
+  }
+}
+
+async function addFine(){
+  const name = $("fName").value.trim();
+  if(!name){ toast("⚠ Name fehlt"); return; }
+  const n = naechsteNr(name), betrag = strafe(n);
+  const grund = `Spontane Absage (${n}. Mal)`;
+
+  if(!CONFIG.APPS_SCRIPT_URL){
+    const t = state.spieler.find(p=>p.name.toLowerCase()===name.toLowerCase());
+    const heute = new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"});
+    if(t){ t.anzahl++; t.offen += betrag; t.letzte = heute; }
+    else state.spieler.push({name, anzahl:1, offen:betrag, letzte:heute});
+    render(); $("fName").value=""; preview();
+    toast(betrag===0 ? "✔ Verwarnung eingetragen (Demo)" : `✔ ${eur(betrag)} eingetragen (Demo)`);
+    return;
+  }
+  try{
+    const res = await fetch(CONFIG.APPS_SCRIPT_URL,{
+      method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({action:"strafe", pass:state.adminPass, name, grund, betrag})
+    });
+    const d = await res.json();
+    if(d.ok){
+      await loadData(); $("fName").value=""; preview();
+      toast(betrag===0 ? "✔ Verwarnung eingetragen" : `✔ ${eur(betrag)} eingetragen`);
+    } else toast("⚠ " + (d.error||"Fehler"));
+  }catch(e){ toast("⚠ Verbindung fehlgeschlagen"); }
+}
+
+/* Kassensturz */
 function startSturz(){
-  const auf = state.payments.filter(p=>p.status==="Auf PayPal");
+  const auf = state.payments.filter(p=>!istPocket(p));
   const sum = auf.reduce((s,p)=>s+p.betrag,0);
-  if(!auf.length){ toast("Nichts auf PayPal – alles schon verbucht ✔"); return; }
+  if(!auf.length){ toast("Nichts offen – alles schon verbucht ✔"); return; }
   $("sturzCount").textContent = auf.length;
   $("sturzAmount").textContent = eur(sum);
   $("sturzText").textContent = `Überweise jetzt manuell ${eur(sum)} von PayPal auf dein C24-Pocket.`;
@@ -515,13 +488,12 @@ function copySturz(){ copy($("sturzText").textContent); }
 async function finishSturz(){
   $("sturzDone").disabled = true;
   if(!CONFIG.APPS_SCRIPT_URL){
-    state.payments.forEach(p=>{ if(p.status==="Auf PayPal") p.status="Im C24-Pocket verschoben"; });
+    state.payments.forEach(p=>{ if(!istPocket(p)) p.status=IM_POCKET; });
     done(); return;
   }
   try{
     const res = await fetch(CONFIG.APPS_SCRIPT_URL,{
-      method:"POST",
-      headers:{"Content-Type":"text/plain;charset=utf-8"},   // vermeidet CORS-Preflight
+      method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
       body: JSON.stringify({action:"kassensturz", pass: state.adminPass})
     });
     const d = await res.json();
@@ -533,69 +505,14 @@ async function finishSturz(){
 function done(n){
   render();
   $("sturzResult").textContent = n!=null ? `${n} Zahlungen auf "Im C24-Pocket verschoben" gesetzt.` : `Alle Status im Sheet aktualisiert.`;
-  step("sturz3");
-  toast("✔ Kassensturz verbucht");
+  step("sturz3"); toast("✔ Kassensturz verbucht");
   $("sturzDone").disabled = false;
 }
 function cancelSturz(){ step("sturz1"); }
 function step(id){ ["sturz1","sturz2","sturz3"].forEach(s=>$(s).classList.toggle("open",s===id)); }
 
-/* Strafenkatalog: Spontane Absage – Staffel ×1,5 */
-function katChange(){
-  const absage = $("fKat").value === "absage";
-  $("absageBox").style.display = absage ? "block" : "none";
-  $("fGrund").style.display = absage ? "none" : "block";
-  if(absage) nameChange(); else { $("fGrund").value=""; $("fBetrag").value=""; }
-}
-function absageStrafe(n){ return n < 2 ? 0 : Math.round(100 * Math.pow(1.5, n-2)) / 100; }
-
-/* Zählt bisherige Absagen des Spielers und schlägt die nächste Nummer vor */
-function nameChange(){
-  if($("fKat").value !== "absage") return;
-  const name = $("fName").value.trim().toLowerCase();
-  const treffer = (state.absagen||[]).find(a => a.name.trim().toLowerCase() === name);
-  $("fAbsageNr").value = treffer ? treffer.anzahl + 1 : 1;
-  absageCalc();
-}
-function absageCalc(){
-  const n = Math.max(1, parseInt($("fAbsageNr").value) || 1);
-  const b = absageStrafe(n);
-  $("fGrund").value = `Spontane Absage (${n}. Mal)`;
-  $("fBetrag").value = b.toFixed(2);
-  $("absageHint").textContent =
-    n === 1 ? "1. Mal → nur VERWARNUNG, 0 € – wird protokolliert und erscheint im Absage-Zähler" :
-    n === 2 ? "2. Mal → 1,00 € + weniger Spielzeit am Spieltag" :
-    `${n}. Mal → Staffel ×1,5 = ${eur(b)}`;
-}
-
-async function addFine(){
-  const name=$("fName").value.trim(), grund=$("fGrund").value.trim(), betrag=parseFloat($("fBetrag").value);
-  const verwarnung = $("fKat").value === "absage" && betrag === 0;
-  if(!name || !grund || isNaN(betrag) || betrag < 0 || (!verwarnung && !(betrag > 0))){
-    toast("⚠ Bitte alle Felder ausfüllen"); return;
-  }
-  if(!CONFIG.APPS_SCRIPT_URL){
-    if(!verwarnung){
-      state.fines.unshift({name,grund,betrag,datum:new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})});
-      render();
-    }
-    toast(verwarnung ? "✔ Verwarnung protokolliert (Demo)" : "✔ Strafe eingetragen (Demo)");
-    clearFineForm(); return;
-  }
-  try{
-    const res = await fetch(CONFIG.APPS_SCRIPT_URL,{
-      method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body: JSON.stringify({action:"strafe", pass:state.adminPass, name, grund, betrag})
-    });
-    const d = await res.json();
-    if(d.ok){ await loadData(); toast(verwarnung ? "✔ Verwarnung protokolliert" : "✔ Strafe eingetragen"); clearFineForm(); }
-    else toast("⚠ " + (d.error||"Fehler"));
-  }catch(e){ toast("⚠ Verbindung fehlgeschlagen"); }
-}
-function clearFineForm(){ $("fName").value=$("fGrund").value=$("fBetrag").value=""; $("fKat").value="frei"; katChange(); }
-
 /* ───────── Zahlungs-Modal ───────── */
-let qrPP=null, qrC24=null;
+let qrPP=null;
 function openPay(){ $("payModal").classList.add("open"); document.body.style.overflow="hidden"; }
 function closePay(){ $("payModal").classList.remove("open"); document.body.style.overflow=""; }
 function showQR(which){
@@ -611,29 +528,21 @@ function showQR(which){
   if(which==="c24") buildGiro();
 }
 function zweck(){
-  const n=$("zName").value.trim()||"[Name]";
-  const g=$("zGrund").value.trim()||"[Grund]";
-  const d=new Date().toLocaleDateString("de-DE");
-  return `${n} - ${g} - ${d}`;
+  const n = $("zName").value.trim() || "[Name]";
+  return `${n} - Absage - ${new Date().toLocaleDateString("de-DE")}`;
 }
 function buildZweck(){ $("zweckText").textContent = zweck(); }
 function copyZweck(){ copy(zweck()); }
-
 function buildGiro(){
   const betrag = parseFloat($("c24Betrag").value);
-  const iban = CONFIG.IBAN.replace(/\s/g,"");
-  // EPC069-12 "GiroCode"
   const payload = [
-    "BCD","002","1","SCT",
-    CONFIG.BIC,
-    CONFIG.KONTOINHABER,
-    iban,
-    betrag>0 ? "EUR"+betrag.toFixed(2) : "",
-    "", "",
+    "BCD","002","1","SCT", CONFIG.BIC, CONFIG.KONTOINHABER,
+    CONFIG.IBAN.replace(/\s/g,""),
+    betrag>0 ? "EUR"+betrag.toFixed(2) : "", "", "",
     zweck().slice(0,140)
   ].join("\n");
   $("qrC24Box").innerHTML="";
-  qrC24 = new QRCode($("qrC24Box"), {text: payload, width:200, height:200, correctLevel: QRCode.CorrectLevel.M});
+  new QRCode($("qrC24Box"), {text: payload, width:200, height:200, correctLevel: QRCode.CorrectLevel.M});
 }
 
 /* ───────── Helfer ───────── */
