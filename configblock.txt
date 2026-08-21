@@ -1,0 +1,7 @@
+APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxnoQ9R_0lZdaKY8yFwsTQ72ovhKfT-qZt0TC-PTnWqkQhHwLpAv-upL0KKnb7XPEBE/exec",                    // z.B. "https://script.google.com/macros/s/AKfy.../exec"
+  PAYPAL_ME:       "https://paypal.me/JakobJust1",
+  IBAN:            "DE12 5002 4024 4780 7851 32",   // C24 Pocket IBAN
+  KONTOINHABER:    "Jakob Gross",                    // EPC: keine Umlaute nötig, max 70 Zeichen
+  BIC:             "DEFFDEFFXXX",
+  // Feste Mannschaftsliste – verhindert Tippfehler und doppelte Zähler.
+  SPIELER: ["Jakob G","Tim","Tyler","Sandro","Elvis","Jonathan","Samu","Lennart","Florian","Pascal","Jakob V", "Benni", "Phummin"],
