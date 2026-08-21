@@ -14,14 +14,10 @@
 :root{
   --court:#0B1220; --panel:#141E32; --panel-2:#1B2740; --line:#26334F;
   --ink:#EDF1F8; --ink-dim:#8DA0BF;
-  --mikasa-gelb:#FFC400; --mikasa-blau:#3D6BFF;
-  --pfiff-rot:#FF5C5C; --netz-gruen:#3ECF8E;
+  --gelb:#FFC400; --blau:#3D6BFF; --rot:#FF5C5C; --gruen:#3ECF8E;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{
-  background:var(--court);color:var(--ink);
-  font-family:'Inter',system-ui,sans-serif;min-height:100dvh;padding-bottom:110px;
-}
+body{background:var(--court);color:var(--ink);font-family:'Inter',system-ui,sans-serif;min-height:100dvh;padding-bottom:110px}
 .display{font-family:'Anton',Impact,sans-serif;letter-spacing:.02em}
 
 header{
@@ -33,107 +29,83 @@ header{
   border-bottom:2px solid var(--line);display:flex;align-items:center;gap:14px;
 }
 .ball{width:46px;height:46px;flex-shrink:0}
-header h1{font-size:1.7rem;line-height:1;color:var(--mikasa-gelb)}
+header h1{font-size:1.7rem;line-height:1;color:var(--gelb)}
 header .sub{font-size:.72rem;font-weight:600;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.18em;margin-top:4px}
 
 main{max-width:520px;margin:0 auto;padding:18px 16px 0}
 
-/* Anzeigetafel */
 .scoreboard{
   background:var(--panel);border:1px solid var(--line);border-radius:18px;
-  padding:22px 20px 18px;text-align:center;position:relative;overflow:hidden;
+  padding:22px 20px;text-align:center;position:relative;overflow:hidden;
 }
-.scoreboard::before{
-  content:"";position:absolute;inset:-40% -20% auto;height:180%;
-  border-radius:50%;border:2px solid rgba(61,107,255,.14);pointer-events:none;
-}
+.scoreboard::before{content:"";position:absolute;inset:-40% -20% auto;height:180%;border-radius:50%;border:2px solid rgba(61,107,255,.14);pointer-events:none}
 .scoreboard .label{font-size:.72rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim)}
 .scoreboard .amount{
   font-family:'Anton',Impact,sans-serif;font-size:clamp(3.2rem,16vw,4.6rem);
-  color:var(--mikasa-gelb);line-height:1.05;font-variant-numeric:tabular-nums;
+  color:var(--gelb);line-height:1.05;font-variant-numeric:tabular-nums;
   text-shadow:0 0 24px rgba(255,196,0,.25);
 }
+.scoreboard .sub2{font-size:.8rem;color:var(--ink-dim);margin-top:6px}
+.scoreboard .sub2 b{color:var(--rot)}
 
 section{margin-top:26px}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;border-bottom:2px solid var(--line);padding-bottom:8px}
 .sec-head h2{font-size:1.05rem;font-weight:700}
 .sec-head .count{font-family:'Anton',sans-serif;font-size:1.05rem;color:var(--ink-dim)}
-.sec-head .count.red{color:var(--pfiff-rot)}
 
 .card-list{display:flex;flex-direction:column;gap:8px}
-.row{
-  background:var(--panel);border:1px solid var(--line);border-radius:14px;
-  padding:13px 14px;display:flex;align-items:center;gap:12px;
-}
+.row{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .row .who{flex:1;min-width:0}
 .row .who .name{font-weight:600;font-size:.95rem}
 .row .who .why{font-size:.8rem;color:var(--ink-dim);margin-top:2px}
 .row .amt{font-family:'Anton',sans-serif;font-size:1.15rem;font-variant-numeric:tabular-nums;flex-shrink:0}
-.row.offen{border-left:4px solid var(--pfiff-rot)}
-.row.offen .amt{color:var(--pfiff-rot)}
-.row.warn{border-left:4px solid var(--mikasa-gelb)}
-.row.clean{border-left:4px solid var(--netz-gruen)}
-.row.clean .amt{font-size:.8rem;font-family:'Inter';color:var(--netz-gruen);font-weight:700}
+.row.offen{border-left:4px solid var(--rot)}
+.row.offen .amt{color:var(--rot)}
+.row.warn{border-left:4px solid var(--gelb)}
+.row.clean{border-left:4px solid var(--gruen)}
+.row.clean .amt{font-size:.8rem;font-family:'Inter';color:var(--gruen);font-weight:700}
+.row.ausgabe{border-left:4px solid var(--blau)}
+.row.ausgabe .amt{color:var(--blau)}
 .tally{display:flex;gap:4px;margin-top:6px}
 .tally span{width:9px;height:9px;border-radius:50%;background:var(--line)}
-.tally span.on{background:var(--mikasa-gelb)}
-.tally span.hot{background:var(--pfiff-rot)}
-
-/* Admin-Aktionen in der Spielerzeile */
-.row.hasactions{flex-wrap:wrap}
+.tally span.on{background:var(--gelb)}
+.tally span.hot{background:var(--rot)}
 .row-actions{display:flex;gap:6px;width:100%;margin-top:4px}
 .mini{
   flex:1;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);
-  border-radius:10px;padding:9px 6px;font-family:inherit;font-size:.78rem;font-weight:700;
-  cursor:pointer;min-height:40px;
+  border-radius:10px;padding:9px 6px;font-family:inherit;font-size:.8rem;font-weight:700;
+  cursor:pointer;min-height:42px;
 }
 .mini:active{transform:scale(.97)}
-.mini.gruen{background:rgba(62,207,142,.15);border-color:var(--netz-gruen);color:var(--netz-gruen)}
-.status{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 8px;border-radius:6px;flex-shrink:0}
-.status.paypal{background:rgba(61,107,255,.16);color:#7C9BFF}
-.status.pocket{background:rgba(62,207,142,.14);color:var(--netz-gruen)}
+.mini.gruen{background:rgba(62,207,142,.15);border-color:var(--gruen);color:var(--gruen)}
 .empty{color:var(--ink-dim);font-size:.88rem;text-align:center;padding:22px 10px;background:var(--panel);border:1px dashed var(--line);border-radius:14px}
+.skeleton{height:64px;background:var(--panel);border:1px solid var(--line);border-radius:14px;opacity:.5;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:.6}}
 
-/* Regeln */
 .rules{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
-.rules-sub{font-size:.85rem;color:var(--ink);margin-bottom:12px;line-height:1.5}
-.rules-sub b{color:var(--mikasa-gelb)}
-.rules table{width:100%;border-collapse:collapse;font-size:.85rem;margin-bottom:14px}
-.rules th{text-align:left;background:var(--mikasa-blau);color:#fff;padding:8px 10px;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+.rules-sub{font-size:.85rem;margin-bottom:12px;line-height:1.5}
+.rules-sub b{color:var(--gelb)}
+.rules table{width:100%;border-collapse:collapse;font-size:.85rem;margin-bottom:12px}
+.rules th{text-align:left;background:var(--blau);color:#fff;padding:8px 10px;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
 .rules td{padding:9px 10px;border-bottom:1px solid var(--line)}
 .rules p{font-size:.82rem;color:var(--ink-dim);line-height:1.45}
 
-/* Buttons */
-.btn{
-  display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
-  min-height:58px;border:none;border-radius:16px;
-  font-family:'Inter',sans-serif;font-size:1.05rem;font-weight:700;
-  cursor:pointer;transition:transform .08s, filter .15s;
-}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58px;border:none;border-radius:16px;font-family:'Inter',sans-serif;font-size:1.05rem;font-weight:700;cursor:pointer;transition:transform .08s,filter .15s}
 .btn:active{transform:scale(.975)}
-.btn-gelb{background:var(--mikasa-gelb);color:#141200}
-.btn-blau{background:var(--mikasa-blau);color:#fff}
+.btn-gelb{background:var(--gelb);color:#141200}
+.btn-blau{background:var(--blau);color:#fff}
 .btn-ghost{background:var(--panel-2);color:var(--ink);border:1px solid var(--line)}
-.btn-gruen{background:var(--netz-gruen);color:#04220F}
+.btn-gruen{background:var(--gruen);color:#04220F}
 .btn[disabled]{filter:grayscale(.6) brightness(.6);cursor:not-allowed}
 
-.bottombar{
-  position:fixed;left:0;right:0;bottom:0;z-index:40;
-  padding:12px 16px calc(env(safe-area-inset-bottom) + 12px);
-  background:linear-gradient(180deg,transparent,var(--court) 30%);
-}
+.bottombar{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:12px 16px calc(env(safe-area-inset-bottom) + 12px);background:linear-gradient(180deg,transparent,var(--court) 30%)}
 .bottombar .btn{max-width:520px;margin:0 auto;box-shadow:0 8px 28px rgba(255,196,0,.28)}
 
-/* Modal */
 .modal-bg{position:fixed;inset:0;background:rgba(4,8,16,.78);backdrop-filter:blur(4px);z-index:50;display:none;align-items:flex-end;justify-content:center}
 .modal-bg.open{display:flex}
-.modal{
-  background:var(--panel);border:1px solid var(--line);border-radius:22px 22px 0 0;
-  width:100%;max-width:520px;max-height:88dvh;overflow-y:auto;
-  padding:22px 20px calc(env(safe-area-inset-bottom) + 22px);animation:up .22s ease;
-}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:22px 22px 0 0;width:100%;max-width:520px;max-height:88dvh;overflow-y:auto;padding:22px 20px calc(env(safe-area-inset-bottom) + 22px);animation:up .22s ease}
 @keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
-@media (prefers-reduced-motion:reduce){.modal{animation:none}.btn:active{transform:none}}
+@media (prefers-reduced-motion:reduce){.modal{animation:none}.btn:active,.mini:active{transform:none}}
 .modal h3{font-size:1.25rem;margin-bottom:4px}
 .modal .hint{font-size:.85rem;color:var(--ink-dim);margin-bottom:18px}
 .modal .close{position:sticky;top:0;float:right;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);width:38px;height:38px;border-radius:50%;font-size:1.1rem;cursor:pointer}
@@ -142,38 +114,25 @@ section{margin-top:26px}
 .qr-wrap.open{display:block}
 .qr-box{background:#fff;border-radius:16px;padding:16px;width:fit-content;margin:0 auto}
 
-input,select{
-  width:100%;background:var(--court);border:1px solid var(--line);border-radius:12px;
-  color:var(--ink);font-size:1rem;padding:13px 14px;font-family:inherit;margin-bottom:10px;
-}
-input:focus,select:focus,.btn:focus-visible{outline:2px solid var(--mikasa-gelb);outline-offset:2px}
+input,select{width:100%;background:var(--court);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-size:1rem;padding:13px 14px;font-family:inherit;margin-bottom:10px}
+input:focus,select:focus,.btn:focus-visible,.mini:focus-visible{outline:2px solid var(--gelb);outline-offset:2px}
 label{font-size:.78rem;font-weight:600;color:var(--ink-dim);display:block;margin-bottom:5px}
 
 #adminPanel{display:none}
 #adminPanel.open{display:block}
-.admin-box{background:var(--panel);border:1px solid var(--mikasa-blau);border-radius:18px;padding:18px;margin-top:12px}
+.admin-box{background:var(--panel);border:1px solid var(--blau);border-radius:18px;padding:18px;margin-top:12px}
+.preview{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center;font-size:.85rem;color:var(--ink-dim)}
+.preview b{display:block;font-family:'Anton',sans-serif;font-size:1.6rem;color:var(--gelb);margin-top:4px}
+.preview.verwarnung b{color:var(--ink-dim);font-size:1.1rem}
 .sturz-step{display:none}
 .sturz-step.open{display:block}
-.sturz-amount{font-family:'Anton',sans-serif;font-size:2.6rem;color:var(--mikasa-blau);text-align:center;margin:10px 0;font-variant-numeric:tabular-nums}
-.copyline{display:flex;gap:8px;margin:12px 0}
-.copyline code{flex:1;background:var(--court);border-radius:10px;padding:12px;font-size:.9rem;word-break:break-all}
-.copyline .btn{width:auto;min-height:auto;padding:0 16px;font-size:.85rem}
-.preview{
-  background:var(--panel-2);border:1px solid var(--line);border-radius:12px;
-  padding:12px;margin-bottom:12px;text-align:center;font-size:.85rem;color:var(--ink-dim);
-}
-.preview b{display:block;font-family:'Anton',sans-serif;font-size:1.6rem;color:var(--mikasa-gelb);margin-top:4px}
-.preview.verwarnung b{color:var(--ink-dim);font-size:1.1rem}
+.sturz-amount{font-family:'Anton',sans-serif;font-size:2.6rem;color:var(--blau);text-align:center;margin:10px 0;font-variant-numeric:tabular-nums}
+
 footer{margin-top:40px;text-align:center;padding-bottom:8px}
 footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;cursor:pointer;text-decoration:underline;padding:10px}
-.toast{
-  position:fixed;left:50%;bottom:110px;transform:translateX(-50%);
-  background:var(--netz-gruen);color:#04220F;font-weight:700;font-size:.9rem;
-  padding:12px 20px;border-radius:999px;z-index:99;display:none;
-  max-width:90vw;text-align:center;line-height:1.35;
-}
-.toast.err{background:var(--pfiff-rot);color:#2A0000}
-.demo-banner{background:rgba(255,196,0,.1);border:1px solid rgba(255,196,0,.3);color:var(--mikasa-gelb);font-size:.78rem;border-radius:12px;padding:10px 14px;margin-bottom:16px;display:none}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--gruen);color:#04220F;font-weight:700;font-size:.9rem;padding:12px 20px;border-radius:999px;z-index:99;display:none;max-width:90vw;text-align:center;line-height:1.35}
+.toast.err{background:var(--rot);color:#2A0000}
+.demo-banner{background:rgba(255,196,0,.1);border:1px solid rgba(255,196,0,.3);color:var(--gelb);font-size:.78rem;border-radius:12px;padding:10px 14px;margin-bottom:16px;display:none}
 </style>
 </head>
 <body>
@@ -193,33 +152,31 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
 
 <main>
   <div class="demo-banner" id="demoBanner">
-    ⚠ Demo-Modus: Noch keine Google-Sheet-Anbindung konfiguriert (CONFIG.APPS_SCRIPT_URL). Es werden Beispieldaten angezeigt.
+    ⚠ Demo-Modus: CONFIG.APPS_SCRIPT_URL ist noch leer. Angezeigt werden Beispieldaten.
   </div>
 
   <div class="scoreboard">
     <div class="label">Kassenstand</div>
     <div class="amount" id="balance">–</div>
+    <div class="sub2" id="offenHint"></div>
   </div>
 
-  <!-- Spielerliste: Absagen + offener Betrag in einem -->
   <section>
     <div class="sec-head">
-      <h2>📋 Absagen</h2>
-      <span class="count red" id="openSum">0,00 €</span>
+      <h2>📋 Zu spät abgesagt</h2>
+      <span class="count" id="playerCount"></span>
     </div>
-    <div class="card-list" id="playerList"></div>
+    <div class="card-list" id="playerList"><div class="skeleton"></div><div class="skeleton"></div></div>
   </section>
 
-  <!-- Zahlungen -->
-  <section>
+  <section id="ausgabenSection" style="display:none">
     <div class="sec-head">
-      <h2>💸 Letzte Zahlungen</h2>
-      <span class="count" id="payCount">0</span>
+      <h2>🧾 Ausgaben</h2>
+      <span class="count" id="ausgabenSum"></span>
     </div>
-    <div class="card-list" id="payList"></div>
+    <div class="card-list" id="ausgabenList"></div>
   </section>
 
-  <!-- Regel -->
   <section>
     <div class="sec-head"><h2>📖 Die Regel</h2></div>
     <div class="rules">
@@ -230,6 +187,7 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
         <tr><th>Absage</th><th>Kostet</th></tr>
         <tr><td>1. Mal</td><td>Verwarnung – 0 €</td></tr>
         <tr><td>2. Mal</td><td>1,00 € + weniger Spielzeit</td></tr>
+        <tr><td>3. Mal</td><td>1,50 €</td></tr>
         <tr><td>jedes weitere</td><td>× 1,5 vom vorherigen</td></tr>
       </table>
       <p>Wer zuverlässig da ist, spielt auch am Spieltag – wer oft fehlt oder absagt, ggf. nicht. Strafen sammelt Jakob ein.</p>
@@ -241,11 +199,17 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
     <div class="sec-head"><h2>🔧 Kassenwart</h2></div>
 
     <div class="admin-box">
-      <label>Absage eintragen</label>
-      <input id="fName" placeholder="Name" oninput="preview()" list="namen">
-      <datalist id="namen"></datalist>
-      <div class="preview" id="previewBox">Name eingeben …</div>
-      <button class="btn btn-ghost" onclick="addFine()">Eintragen</button>
+      <label>Verspätete Absage eintragen</label>
+      <select id="fName" onchange="preview()"></select>
+      <div class="preview" id="previewBox">Spieler wählen …</div>
+      <button class="btn btn-gelb" onclick="addAbsage()">Eintragen</button>
+    </div>
+
+    <div class="admin-box">
+      <label>Ausgabe erfassen</label>
+      <input id="aZweck" placeholder="Wofür? (z.B. neue Bälle)">
+      <input id="aBetrag" type="number" inputmode="decimal" step="0.50" placeholder="Betrag in €">
+      <button class="btn btn-ghost" onclick="addAusgabe()">Ausgabe buchen</button>
     </div>
 
     <div class="admin-box">
@@ -253,14 +217,13 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
         <button class="btn btn-blau" onclick="startSturz()">Kassensturz machen</button>
       </div>
       <div class="sturz-step" id="sturz2">
-        <div style="text-align:center;font-size:.85rem;color:var(--ink-dim)">Noch nicht aufs Konto übertragen (<span id="sturzCount"></span> Zahlungen)</div>
+        <div style="text-align:center;font-size:.85rem;color:var(--ink-dim)">Noch nicht aufs Konto übertragen</div>
         <div class="sturz-amount" id="sturzAmount"></div>
-        <div class="copyline">
-          <code id="sturzText"></code>
-          <button class="btn btn-ghost" onclick="copySturz()">Kopieren</button>
-        </div>
+        <p style="text-align:center;font-size:.85rem;color:var(--ink-dim);margin-bottom:14px">
+          Diesen Betrag jetzt aufs C24-Pocket übertragen, dann bestätigen.
+        </p>
         <button class="btn btn-gruen" id="sturzDone" onclick="finishSturz()">✔ Erledigt &amp; verbucht</button>
-        <button class="btn btn-ghost" style="margin-top:8px" onclick="cancelSturz()">Abbrechen</button>
+        <button class="btn btn-ghost" style="margin-top:8px" onclick="step('sturz1')">Abbrechen</button>
       </div>
       <div class="sturz-step" id="sturz3">
         <div style="text-align:center;padding:10px 0">
@@ -268,13 +231,13 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
           <div style="font-weight:700;margin-top:6px">Alles verbucht!</div>
           <div style="font-size:.85rem;color:var(--ink-dim);margin-top:4px" id="sturzResult"></div>
         </div>
-        <button class="btn btn-ghost" onclick="cancelSturz()">Fertig</button>
+        <button class="btn btn-ghost" onclick="step('sturz1')">Fertig</button>
       </div>
     </div>
   </section>
 
   <footer>
-    <button onclick="adminLogin()" id="adminToggle">Admin-Bereich</button>
+    <button onclick="adminToggle()" id="adminBtn">Admin-Bereich</button>
   </footer>
 </main>
 
@@ -287,23 +250,20 @@ footer button{background:none;border:none;color:var(--ink-dim);font-size:.75rem;
     <button class="close" onclick="closePay()" aria-label="Schließen">✕</button>
     <h3 class="display">STRAFE ZAHLEN</h3>
     <p class="hint">Wähle deinen Zahlungsweg.</p>
-
     <div class="pay-options">
       <button class="btn btn-blau" onclick="showQR('paypal')">💙 Per PayPal zahlen</button>
-      <button class="btn btn-ghost" onclick="showQR('c24')">🏦 Banküberweisung per QR-Code</button>
+      <button class="btn btn-ghost" onclick="showQR('bank')">🏦 Banküberweisung per QR-Code</button>
     </div>
-
     <div class="qr-wrap" id="qrPaypal">
       <div class="qr-box" id="qrPaypalBox"></div>
       <p style="text-align:center;font-size:.85rem;color:var(--ink-dim);margin-top:10px">
-        QR scannen oder direkt öffnen: <a id="ppLink" href="#" style="color:var(--mikasa-blau)" target="_blank" rel="noopener"></a>
+        QR scannen oder öffnen: <a id="ppLink" href="#" style="color:var(--blau)" target="_blank" rel="noopener"></a>
       </p>
     </div>
-
-    <div class="qr-wrap" id="qrC24">
+    <div class="qr-wrap" id="qrBank">
       <label style="margin-top:14px">Betrag in €</label>
-      <input id="c24Betrag" type="number" inputmode="decimal" step="0.50" placeholder="z.B. 1.50" oninput="buildGiro()">
-      <div class="qr-box" id="qrC24Box"></div>
+      <input id="bankBetrag" type="number" inputmode="decimal" step="0.50" placeholder="z.B. 1.50" oninput="buildGiro()">
+      <div class="qr-box" id="qrBankBox"></div>
       <p style="text-align:center;font-size:.85rem;color:var(--ink-dim);margin-top:10px">
         QR-Code mit der Banking-App scannen – IBAN und Betrag sind schon drin.
       </p>
@@ -321,270 +281,243 @@ const CONFIG = {
   IBAN:            "DE12 5002 4024 4780 7851 32",   // C24 Pocket IBAN
   KONTOINHABER:    "Jakob Gross",                    // EPC: keine Umlaute nötig, max 70 Zeichen
   BIC:             "DEFFDEFFXXX",
+  // Feste Mannschaftsliste – verhindert Tippfehler und doppelte Zähler.
+  SPIELER: ["Jakob G","Tim","Tyler","Sandro","Elvis","Jonathan","Samu","Lennart","Florian","Pascal","Jakob V", "Benni", "Phummin"],
 };
 /* ═══════════════════════════════════════════════════ */
 
 const DEMO = {
-  payments: [
-    {name:"Marie", betrag:1, status:"Auf PayPal", datum:"22.07."},
-    {name:"Tim", betrag:1.5, status:"Auf PayPal", datum:"20.07."},
-    {name:"Lena", betrag:1, status:"Im C24-Pocket verschoben", datum:"15.07."},
-  ],
+  kassenstand: 4.5, offen: 2.5, unverbucht: 1,
   spieler: [
-    {name:"Jonas", anzahl:3, offen:1.5, letzte:"18.07."},
-    {name:"Paul",  anzahl:2, offen:1,   letzte:"21.07."},
-    {name:"Basti", anzahl:1, offen:0,   letzte:"11.07."},
-  ]
+    {name:"Jonas", anzahl:3, offen:1.5, letzte:"18.08.2026"},
+    {name:"Tim",   anzahl:2, offen:1,   letzte:"20.08.2026"},
+    {name:"Tyler", anzahl:1, offen:0,   letzte:"20.08.2026"},
+  ],
+  ausgaben: [{datum:"12.08.2026", zweck:"Neue Bälle", betrag:24}]
 };
 
-let state = {payments:[], spieler:[], admin:false, adminPass:""};
-const eur = n => n.toLocaleString("de-DE",{style:"currency",currency:"EUR"});
+let state = {kassenstand:0, offen:0, unverbucht:0, spieler:[], ausgaben:[], admin:false, pass:""};
+const eur = n => (Number(n)||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
 const $ = id => document.getElementById(id);
 const esc = s => String(s??"").replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
 
-/* Staffel: 1. Mal 0 €, ab dem 2. Mal 1 € × 1,5 pro weiterem Mal */
-function strafe(n){ return n < 2 ? 0 : Math.round(100 * Math.pow(1.5, n-2)) / 100; }
+/* Ab der 2. Absage 1 €, jedes weitere Mal ×1,5, aufgerundet auf 50 Cent. */
+function strafe(nr){ return nr < 2 ? 0 : Math.ceil(Math.pow(1.5, nr-2) * 2) / 2; }
 
-async function loadData(){
-  if(!CONFIG.APPS_SCRIPT_URL){
-    $("demoBanner").style.display="block";
-    state.payments = DEMO.payments; state.spieler = DEMO.spieler;
-    render(); return;
-  }
-  try{
-    const res = await fetch(CONFIG.APPS_SCRIPT_URL + "?action=data");
-    const d = await res.json();
-    state.payments = d.payments || []; state.spieler = d.spieler || [];
-    render();
-  }catch(e){ toast("⚠ Verbindung zum Sheet fehlgeschlagen"); }
-}
-
-/* Status-Auswertung bewusst tolerant: Nur wer exakt als verschoben markiert ist,
-   zählt als Pocket. Alles andere (auch Tippfehler im Sheet) gilt als "noch auf PayPal"
-   und taucht damit im nächsten Kassensturz auf, statt still verloren zu gehen. */
-const IM_POCKET = "Im C24-Pocket verschoben";
-const istPocket = p => p.status === IM_POCKET;
-
-/* Datum robust auf "20.08." kürzen – egal ob das Sheet ein Datum,
-   einen ISO-String oder einen ausgeschriebenen JS-Date-String liefert. */
 function kurzDatum(v){
   if(!v) return "";
   const s = String(v);
-  const de = s.match(/^(\d{1,2})\.(\d{1,2})\./);        // schon "20.08.2026"
+  const de = s.match(/^(\d{1,2})\.(\d{1,2})\./);
   if(de) return `${de[1].padStart(2,"0")}.${de[2].padStart(2,"0")}.`;
   const d = new Date(s);
-  if(!isNaN(d)) return `${String(d.getDate()).padStart(2,"0")}.${String(d.getMonth()+1).padStart(2,"0")}.`;
-  return s.slice(0,10);
+  return isNaN(d) ? s.slice(0,10) : `${String(d.getDate()).padStart(2,"0")}.${String(d.getMonth()+1).padStart(2,"0")}.`;
+}
+
+/* ───────── Daten ───────── */
+async function loadData(){
+  if(!CONFIG.APPS_SCRIPT_URL){
+    $("demoBanner").style.display = "block";
+    Object.assign(state, DEMO);
+    render(); return;
+  }
+  try{
+    const res = await fetch(CONFIG.APPS_SCRIPT_URL);
+    const d = await res.json();
+    if(!d.ok) return toast("⚠ " + (d.error || "Fehler beim Laden"));
+    Object.assign(state, {
+      kassenstand:d.kassenstand, offen:d.offen, unverbucht:d.unverbucht,
+      spieler:d.spieler||[], ausgaben:d.ausgaben||[]
+    });
+    render();
+  }catch(e){
+    $("playerList").innerHTML = `<div class="empty">Keine Verbindung zum Sheet.<br>Später nochmal versuchen.</div>`;
+    toast("⚠ Verbindung fehlgeschlagen");
+  }
 }
 
 function render(){
-  const gesamt = state.payments.reduce((s,p)=>s+p.betrag,0);
-  $("balance").textContent = eur(gesamt);
+  $("balance").textContent = eur(state.kassenstand);
+  $("offenHint").innerHTML = state.offen > 0 ? `davon noch offen: <b>${eur(state.offen)}</b>` : "alles bezahlt ✓";
 
-  // Spieler: Absagen + offener Betrag in einer Zeile
+  // Spieler: nur wer mindestens eine Absage hat, offene zuerst
   const sp = [...state.spieler].sort((a,b)=> b.offen-a.offen || b.anzahl-a.anzahl);
-  const offenGesamt = sp.reduce((s,p)=>s+p.offen,0);
-  $("openSum").textContent = eur(offenGesamt);
+  $("playerCount").textContent = sp.length ? sp.length + " Spieler" : "";
   $("playerList").innerHTML = sp.length ? sp.map(p=>{
     const punkte = Array.from({length:Math.max(3,p.anzahl)},(_,i)=>
       `<span class="${i<p.anzahl ? (i>=2?"hot":"on") : ""}"></span>`).join("");
     const cls = p.offen>0 ? "offen" : (p.anzahl===1 ? "warn" : "clean");
     const rechts = p.offen>0
       ? `<div class="amt">${eur(p.offen)}</div>`
-      : `<div class="amt">${p.anzahl===1?"Verwarnung":"bezahlt ✓"}</div>`;
-    const aktionen = (state.admin && p.offen>0) ? `
+      : `<div class="amt">${p.anzahl===1 ? "Verwarnung" : "bezahlt ✓"}</div>`;
+    const aktionen = state.admin ? `
       <div class="row-actions">
-        <button class="mini gruen" onclick="bezahlt('${esc(p.name)}', false)">✓ Bezahlt (PayPal)</button>
-        <button class="mini" onclick="bezahlt('${esc(p.name)}', true)">💶 Bar kassiert</button>
+        ${p.offen>0 ? `<button class="mini gruen" onclick="bezahlt('${esc(p.name)}')">✓ ${eur(p.offen)} kassiert</button>` : ""}
+        <button class="mini" onclick="rueckgaengig('${esc(p.name)}')">↩ Letzte löschen</button>
       </div>` : "";
-    return `
-    <div class="row ${cls}${aktionen?" hasactions":""}">
+    return `<div class="row ${cls}">
       <div class="who">
         <div class="name">${esc(p.name)}</div>
-        <div class="why">${p.anzahl}× abgesagt${p.letzte?" · zuletzt "+kurzDatum(p.letzte):""} · nächste ${eur(strafe(p.anzahl+1))}</div>
+        <div class="why">${p.anzahl}× zu spät abgesagt${p.letzte?" · zuletzt "+kurzDatum(p.letzte):""} · nächstes Mal ${eur(strafe(p.anzahl+1))}</div>
         <div class="tally">${punkte}</div>
       </div>
-      ${rechts}
-      ${aktionen}
+      ${rechts}${aktionen}
     </div>`;
-  }).join("") : `<div class="empty">Keine Absagen – alle zuverlässig! 💪</div>`;
+  }).join("") : `<div class="empty">Niemand zu spät abgesagt – alle zuverlässig! 💪</div>`;
 
-  const recent = state.payments.slice(0,8);
-  $("payCount").textContent = state.payments.length;
-  $("payList").innerHTML = recent.length ? recent.map(p=>`
-    <div class="row">
-      <div class="who"><div class="name">${esc(p.name)}</div><div class="why">${kurzDatum(p.datum)}</div></div>
-      <span class="status ${istPocket(p)?"pocket":"paypal"}">${istPocket(p)?"C24-Pocket":"Auf PayPal"}</span>
-      <div class="amt">${eur(p.betrag)}</div>
-    </div>`).join("") : `<div class="empty">Noch keine Zahlungen eingegangen.</div>`;
+  // Ausgaben
+  const aus = state.ausgaben || [];
+  $("ausgabenSection").style.display = aus.length ? "block" : "none";
+  $("ausgabenSum").textContent = eur(aus.reduce((s,a)=>s+a.betrag,0));
+  $("ausgabenList").innerHTML = aus.slice(0,8).map(a=>`
+    <div class="row ausgabe">
+      <div class="who"><div class="name">${esc(a.zweck)}</div><div class="why">${kurzDatum(a.datum)}</div></div>
+      <div class="amt">−${eur(a.betrag)}</div>
+    </div>`).join("");
 
-  $("namen").innerHTML = state.spieler.map(p=>`<option value="${esc(p.name)}">`).join("");
+  // Spieler-Dropdown
+  if(!$("fName").options.length){
+    $("fName").innerHTML = `<option value="">– Spieler wählen –</option>` +
+      CONFIG.SPIELER.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join("");
+  }
   if(state.admin) preview();
 }
 
 /* ───────── Admin ───────── */
-function adminLogin(){
-  if(state.admin){ state.admin=false; $("adminPanel").classList.remove("open"); $("adminToggle").textContent="Admin-Bereich"; return; }
+function adminToggle(){
+  if(state.admin){
+    state.admin = false; state.pass = "";
+    try{ localStorage.removeItem("kassePass"); }catch(e){}
+    $("adminPanel").classList.remove("open");
+    $("adminBtn").textContent = "Admin-Bereich";
+    render(); return;
+  }
   const p = prompt("Kassenwart-Passwort:");
   if(!p) return;
-  state.adminPass = p; state.admin = true;
+  loginMit(p, true);
+}
+function loginMit(p, scroll){
+  state.pass = p; state.admin = true;
+  try{ localStorage.setItem("kassePass", p); }catch(e){}
   $("adminPanel").classList.add("open");
-  $("adminToggle").textContent="Admin-Bereich schließen";
-  $("adminPanel").scrollIntoView({behavior:"smooth"});
-  preview();
+  $("adminBtn").textContent = "Admin-Bereich schließen";
+  render();
+  if(scroll) $("adminPanel").scrollIntoView({behavior:"smooth"});
 }
 
-/* Live-Vorschau: welche Absage ist es und was kostet sie */
 function naechsteNr(name){
   const t = state.spieler.find(p=>p.name.trim().toLowerCase() === name.trim().toLowerCase());
   return (t ? t.anzahl : 0) + 1;
 }
 function preview(){
-  const name = $("fName").value.trim();
+  const name = $("fName").value;
   const box = $("previewBox");
-  if(!name){ box.className="preview"; box.innerHTML="Name eingeben …"; return; }
+  if(!name){ box.className="preview"; box.textContent="Spieler wählen …"; return; }
   const n = naechsteNr(name), b = strafe(n);
-  if(b === 0){
-    box.className = "preview verwarnung";
-    box.innerHTML = `${esc(name)} · ${n}. Absage<b>Verwarnung – 0 €</b>`;
-  }else{
-    box.className = "preview";
-    box.innerHTML = `${esc(name)} · ${n}. Absage${n===2?" · + weniger Spielzeit":""}<b>${eur(b)}</b>`;
-  }
+  box.className = "preview" + (b===0 ? " verwarnung" : "");
+  box.innerHTML = b === 0
+    ? `${esc(name)} · ${n}. verspätete Absage<b>Verwarnung – 0 €</b>`
+    : `${esc(name)} · ${n}. verspätete Absage${n===2?" · + weniger Spielzeit":""}<b>${eur(b)}</b>`;
 }
 
-async function addFine(){
-  const name = $("fName").value.trim();
-  if(!name){ toast("⚠ Name fehlt"); return; }
-  const n = naechsteNr(name), betrag = strafe(n);
-  const grund = `Spontane Absage (${n}. Mal)`;
-
-  if(!CONFIG.APPS_SCRIPT_URL){
-    const t = state.spieler.find(p=>p.name.toLowerCase()===name.toLowerCase());
-    const heute = new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"});
-    if(t){ t.anzahl++; t.offen += betrag; t.letzte = heute; }
-    else state.spieler.push({name, anzahl:1, offen:betrag, letzte:heute});
-    render(); $("fName").value=""; preview();
-    toast(betrag===0 ? "✔ Verwarnung eingetragen (Demo)" : `✔ ${eur(betrag)} eingetragen (Demo)`);
-    return;
-  }
+async function post(payload, okMsg){
+  if(!CONFIG.APPS_SCRIPT_URL){ toast("⚠ Demo-Modus – keine Sheet-Anbindung"); return null; }
   try{
     const res = await fetch(CONFIG.APPS_SCRIPT_URL,{
       method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body: JSON.stringify({action:"strafe", pass:state.adminPass, name, grund, betrag})
+      body: JSON.stringify(Object.assign({pass: state.pass}, payload))
     });
     const d = await res.json();
-    if(d.ok){
-      await loadData(); $("fName").value=""; preview();
-      toast(betrag===0 ? "✔ Verwarnung eingetragen" : `✔ ${eur(betrag)} eingetragen`);
-    } else toast("⚠ " + (d.error||"Fehler"));
-  }catch(e){ toast("⚠ Verbindung fehlgeschlagen"); }
+    if(d.ok){ await loadData(); if(okMsg) toast(okMsg(d)); return d; }
+    toast("⚠ " + (d.error || "Fehler"));
+    return null;
+  }catch(e){ toast("⚠ Verbindung fehlgeschlagen"); return null; }
 }
 
-/* Offene Strafen eines Spielers abhaken.
-   bar=false: Geld kam per PayPal/Überweisung, Zahlungszeile existiert schon.
-   bar=true : Bargeld – es wird zusätzlich eine Zahlungszeile angelegt. */
-async function bezahlt(name, bar){
-  const p = state.spieler.find(x=>x.name === name);
-  const betrag = p ? p.offen : 0;
-  if(!confirm(`${name}: ${eur(betrag)} als bezahlt markieren${bar?" und als Bargeld verbuchen":""}?`)) return;
+async function addAbsage(){
+  const name = $("fName").value;
+  if(!name){ toast("⚠ Bitte Spieler wählen"); return; }
+  const d = await post({action:"absage", name},
+    r => r.betrag === 0 ? `✔ ${name}: Verwarnung eingetragen` : `✔ ${name}: ${eur(r.betrag)} eingetragen`);
+  if(d) $("fName").value = "";
+  preview();
+}
 
-  if(!CONFIG.APPS_SCRIPT_URL){
-    if(p){
-      if(bar) state.payments.unshift({name, betrag:p.offen, status:"Bar erhalten", datum:new Date().toLocaleDateString("de-DE")});
-      p.offen = 0;
-    }
-    render(); toast(`✔ ${name}: ${eur(betrag)} verbucht (Demo)`); return;
-  }
-  try{
-    const res = await fetch(CONFIG.APPS_SCRIPT_URL,{
-      method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body: JSON.stringify({action:"bezahlt", pass:state.adminPass, name, bar})
-    });
-    const d = await res.json();
-    if(d.ok){ await loadData(); toast(`✔ ${name}: ${eur(d.summe)} als bezahlt markiert`); }
-    else toast("⚠ " + (d.error||"Fehler"));
-  }catch(e){ toast("⚠ Verbindung fehlgeschlagen"); }
+async function bezahlt(name){
+  const p = state.spieler.find(x=>x.name===name);
+  if(!confirm(`${name}: ${eur(p?p.offen:0)} kassiert?`)) return;
+  await post({action:"bezahlt", name}, r=>`✔ ${name}: ${eur(r.summe)} verbucht`);
+}
+
+async function rueckgaengig(name){
+  if(!confirm(`Letzte verspätete Absage von ${name} löschen?`)) return;
+  await post({action:"rueckgaengig", name}, ()=>`✔ Letzter Eintrag von ${name} gelöscht`);
+}
+
+async function addAusgabe(){
+  const zweck = $("aZweck").value.trim(), betrag = parseFloat($("aBetrag").value);
+  if(!zweck || !(betrag>0)){ toast("⚠ Zweck und Betrag nötig"); return; }
+  const d = await post({action:"ausgabe", zweck, betrag}, ()=>`✔ ${eur(betrag)} für ${zweck} gebucht`);
+  if(d){ $("aZweck").value=""; $("aBetrag").value=""; }
 }
 
 /* Kassensturz */
 function startSturz(){
-  const auf = state.payments.filter(p=>!istPocket(p));
-  const sum = auf.reduce((s,p)=>s+p.betrag,0);
-  if(!auf.length){ toast("Nichts offen – alles schon verbucht ✔"); return; }
-  $("sturzCount").textContent = auf.length;
-  $("sturzAmount").textContent = eur(sum);
-  $("sturzText").textContent = `Jetzt ${eur(sum)} aufs C24-Pocket übertragen (PayPal-Guthaben bzw. Bargeld einzahlen).`;
+  if(!(state.unverbucht > 0)){ toast("Nichts zu übertragen – alles verbucht ✔"); return; }
+  $("sturzAmount").textContent = eur(state.unverbucht);
   step("sturz2");
 }
-function copySturz(){ copy($("sturzText").textContent); }
 async function finishSturz(){
   $("sturzDone").disabled = true;
-  if(!CONFIG.APPS_SCRIPT_URL){
-    state.payments.forEach(p=>{ if(!istPocket(p)) p.status=IM_POCKET; });
-    done(); return;
+  const d = await post({action:"kassensturz"});
+  if(d){
+    $("sturzResult").textContent = `${eur(d.summe)} aus ${d.updated} Einträgen verbucht.`;
+    step("sturz3"); toast("✔ Kassensturz verbucht");
   }
-  try{
-    const res = await fetch(CONFIG.APPS_SCRIPT_URL,{
-      method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body: JSON.stringify({action:"kassensturz", pass: state.adminPass})
-    });
-    const d = await res.json();
-    if(d.ok){ await loadData(); done(d.updated); }
-    else toast("⚠ " + (d.error||"Fehler – Passwort korrekt?"));
-  }catch(e){ toast("⚠ Verbindung fehlgeschlagen"); }
   $("sturzDone").disabled = false;
 }
-function done(n){
-  render();
-  $("sturzResult").textContent = n!=null ? `${n} Zahlungen auf "Im C24-Pocket verschoben" gesetzt.` : `Alle Status im Sheet aktualisiert.`;
-  step("sturz3"); toast("✔ Kassensturz verbucht");
-  $("sturzDone").disabled = false;
-}
-function cancelSturz(){ step("sturz1"); }
-function step(id){ ["sturz1","sturz2","sturz3"].forEach(s=>$(s).classList.toggle("open",s===id)); }
+function step(id){ ["sturz1","sturz2","sturz3"].forEach(s=>$(s).classList.toggle("open", s===id)); }
 
 /* ───────── Zahlungs-Modal ───────── */
-let qrPP=null;
+let qrPP = null;
 function openPay(){ $("payModal").classList.add("open"); document.body.style.overflow="hidden"; }
 function closePay(){ $("payModal").classList.remove("open"); document.body.style.overflow=""; }
 function showQR(which){
   $("qrPaypal").classList.toggle("open", which==="paypal");
-  $("qrC24").classList.toggle("open", which==="c24");
+  $("qrBank").classList.toggle("open", which==="bank");
   if(which==="paypal" && !qrPP){
     qrPP = new QRCode($("qrPaypalBox"), {text: CONFIG.PAYPAL_ME, width:200, height:200, correctLevel: QRCode.CorrectLevel.M});
     $("ppLink").textContent = CONFIG.PAYPAL_ME.replace("https://","");
     $("ppLink").href = CONFIG.PAYPAL_ME;
   }
-  if(which==="c24") buildGiro();
+  if(which==="bank") buildGiro();
 }
 function buildGiro(){
-  const betrag = parseFloat($("c24Betrag").value);
-  const payload = [
-    "BCD","002","1","SCT", CONFIG.BIC, CONFIG.KONTOINHABER,
-    CONFIG.IBAN.replace(/\s/g,""),
-    betrag>0 ? "EUR"+betrag.toFixed(2) : "", "", "",
-    "Mannschaftskasse"
-  ].join("\n");
-  $("qrC24Box").innerHTML="";
-  new QRCode($("qrC24Box"), {text: payload, width:200, height:200, correctLevel: QRCode.CorrectLevel.M});
+  const betrag = parseFloat($("bankBetrag").value);
+  const payload = ["BCD","002","1","SCT", CONFIG.BIC, CONFIG.KONTOINHABER,
+    CONFIG.IBAN.replace(/\s/g,""), betrag>0 ? "EUR"+betrag.toFixed(2) : "", "", "",
+    "Mannschaftskasse"].join("\n");
+  $("qrBankBox").innerHTML = "";
+  new QRCode($("qrBankBox"), {text: payload, width:200, height:200, correctLevel: QRCode.CorrectLevel.M});
 }
 
 /* ───────── Helfer ───────── */
-function copy(t){
-  navigator.clipboard?.writeText(t).then(()=>toast("✔ Kopiert"))
-    .catch(()=>{ const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();toast("✔ Kopiert"); });
-}
 let toastTimer;
 function toast(msg){
-  const t=$("toast");
-  t.textContent=msg;
+  const t = $("toast");
+  t.textContent = msg;
   t.classList.toggle("err", /⚠|fehlgeschlagen|Fehler|Passwort/i.test(msg));
-  t.style.display="block";
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.display="none",3200);
+  t.style.display = "block";
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.style.display="none", 3200);
 }
 
-loadData();
+/* Start: gespeichertes Passwort wiederherstellen */
+(async function init(){
+  await loadData();
+  try{
+    const saved = localStorage.getItem("kassePass");
+    if(saved) loginMit(saved, false);
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
