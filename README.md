@@ -2,7 +2,7 @@
 
 Kassenstand, Absagen pro Spieler, Ausgaben und QR-Codes zum Bezahlen. Read-only für alle Spieler, Admin-Bereich passwortgeschützt.
 
-**Live:** https://iflavius.github.io/kasse
+**Live:** https://namejakob.github.io/kasse
 
 ---
 
